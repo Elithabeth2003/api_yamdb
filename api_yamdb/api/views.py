@@ -30,7 +30,9 @@ class GenreViewSet(
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all().order_by('rating')
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    ).order_by('rating')
     serializer_class = TitleSerializer
     pagination_class = LimitOffsetPagination
 
