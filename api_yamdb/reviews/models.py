@@ -1,4 +1,5 @@
 from django.db import models
+from reviews.validators import validate_year
 
 
 LENGTH_OF_NAME = 30
@@ -27,25 +28,27 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название')
-    year = models.IntegerField(verbose_name='Год', null=True, blank=True)
+    year = models.IntegerField(
+        verbose_name='Год',
+        validators=[validate_year],
+    )
     category = models.ForeignKey(
         Category,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name='Категория',
-        blank=True,
     )
     genre = models.ManyToManyField(
         Genre,
-        blank=True,
         verbose_name='Жанр',
     )
     description = models.TextField(
         blank=True,
-        null=True,
         verbose_name='Описание'
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         default_related_name = 'titles'
 
     def __str__(self):
