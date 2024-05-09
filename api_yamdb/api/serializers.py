@@ -18,12 +18,13 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genre = GenreSerializer(many=True, read_only=True)
+    genre = GenreSerializer(many=True,)
+    category = serializers.SlugRelatedField(
+        slug_field='slug', queryset = Category.objects.all())
 
     class Meta:
         fields = '__all__'
         model = Title
-        read_only_fields = ('category',)
 
 
 class CommentSerializer(serializers.ModelSerializer):
