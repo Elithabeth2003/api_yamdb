@@ -1,16 +1,20 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
+from django.contrib.auth import get_user_model
 from reviews.validators import validate_year
 
 
+User = get_user_model()
 LENGTH_OF_NAME = 30
+
 
 class Category(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название')
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
     class Meta:
+        verbose_name = 'категория'
+        verbose_name_plural = 'категории'        
         ordering = ['name']
 
     def __str__(self):
@@ -22,6 +26,8 @@ class Genre(models.Model):
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
     class Meta:
+        verbose_name = 'жанр'
+        verbose_name_plural = 'жанры'        
         ordering = ['name']
 
     def __str__(self):
@@ -52,6 +58,8 @@ class Title(models.Model):
     )
 
     class Meta:
+        verbose_name = 'произведение'
+        verbose_name_plural = 'произведения'        
         ordering = ('name',)
         default_related_name = 'titles'
 
@@ -62,8 +70,9 @@ class Title(models.Model):
 class Comment(models.Model):
     text = models.TextField('Текст комментария',)
     author = models.ForeignKey(
-        'User',
-        verbose_name='Автор комментария'
+        User,
+        verbose_name='Автор комментария',
+        on_delete=models.CASCADE
     )
     pub_date = models.DateTimeField(
         'Дата публикации комментария',
@@ -86,10 +95,11 @@ class Comment(models.Model):
 class Review(models.Model):
     text = models.TextField('Текст отзыва',)
     author = models.ForeignKey(
-        'User',
-        verbose_name='Автор отзыва'
+        User,
+        verbose_name='Автор отзыва',
+        on_delete=models.CASCADE
     )
-    score = models.IntegerChoices(
+    score = models.IntegerField(
         'Оценка', 
         validators=[MaxValueValidator(10), MinValueValidator(1)]
     )
