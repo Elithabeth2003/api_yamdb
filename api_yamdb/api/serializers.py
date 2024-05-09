@@ -9,6 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         exclude = ('id',)
         model = Category
+        read_only_fields = ('name',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -16,6 +17,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         exclude = ('id',)
         model = Genre
+        read_only_fields = ('name',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
