@@ -81,7 +81,8 @@ class Comment(models.Model):
     review = models.ForeignKey(
         'Review', 
         related_name='comments',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Отзыв',
     )
 
     class Meta:
@@ -89,7 +90,7 @@ class Comment(models.Model):
         verbose_name_plural = 'комментарии'
 
     def __str__(self):
-        return f'Комментарий {self.author} на {self.review}.'
+        return f'Комментарий {self.author} на {self.review}'
     
 
 class Review(models.Model):
@@ -110,7 +111,8 @@ class Review(models.Model):
     title = models.ForeignKey(
         'Title',
         related_name='reviews',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Произведение',
     )
 
     class Meta:
@@ -118,4 +120,4 @@ class Review(models.Model):
         verbose_name_plural = 'отзывы'
 
     def __str__(self):
-        return f'Отзыв {self.author} на {self.title__name}.'
+        return f'Отзыв {self.author} на "{self.title}"'
