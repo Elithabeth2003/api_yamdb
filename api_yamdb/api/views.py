@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.viewsets import ModelViewSet
 
-from api_yamdb.api.viewsets import BaseViewSet
+from api.viewsets import BaseViewSet
 from reviews.models import Category, Genre, Title, Review, Comment
 from api.serializers import (
     CategorySerializer,
