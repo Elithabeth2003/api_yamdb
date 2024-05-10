@@ -25,11 +25,16 @@ class GenreViewSet(BaseViewSet):
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.annotate(
-        rating=Avg('reviews__score')
-    ).order_by('rating')
+    queryset = Title.objects.all()
     serializer_class = TitleSerializer
     pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(
+            rating=Avg('reviews__score')
+        )
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(
@@ -49,18 +54,31 @@ class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-    def __get_post(self):
+    def __get_review(self):
         return get_object_or_404(Comment, pk=self.kwargs.get('review_id'))
 
     def get_queryset(self):
-        return Comment.objects.filter(rewiew=self.__get_post())
+        return Comment.objects.filter(review=self.__get_review())
+
+    def perform_create(self, serializer):
+        serializer.save(
+        author=self.request.user,
+        review=self.__get_review()
+        )
+
 
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
-    def __get_post(self):
+    def __get_title(self):
         return get_object_or_404(Review, pk=self.kwargs.get('title_id'))
 
     def get_queryset(self):
-        return Review.objects.filter(title=self.__get_post())
+        return Review.objects.filter(title=self.__get_title())     
+
+    def perform_create(self, serializer):
+        serializer.save(
+        author=self.request.user,
+        title=self.__get_title()
+        )
