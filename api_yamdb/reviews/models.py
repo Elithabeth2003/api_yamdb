@@ -6,6 +6,8 @@ from reviews.validators import validate_year
 
 User = get_user_model()
 LENGTH_OF_NAME = 30
+LENGTH_OF_REVIEW = 100
+LENGTH_OF_COMMENT = 100
 
 
 class Category(models.Model):
@@ -16,6 +18,7 @@ class Category(models.Model):
         verbose_name = 'категория'
         verbose_name_plural = 'категории'        
         ordering = ['name']
+        default_related_name = 'category'
 
     def __str__(self):
         return self.name[:LENGTH_OF_NAME]
@@ -29,6 +32,7 @@ class Genre(models.Model):
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'        
         ordering = ['name']
+        default_related_name = 'genre'
 
     def __str__(self):
         return self.name[:LENGTH_OF_NAME]
@@ -79,8 +83,7 @@ class Comment(models.Model):
         auto_now_add=True
     )
     review = models.ForeignKey(
-        'Review', 
-        related_name='comments',
+        'Review',
         on_delete=models.CASCADE,
         verbose_name='Отзыв',
     )
@@ -88,9 +91,10 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
+        default_related_name = 'comments'
 
     def __str__(self):
-        return f'Комментарий {self.author} на {self.review}'
+        return f'Комментарий {self.author} на {self.review[:LENGTH_OF_COMMENT]}'
     
 
 class Review(models.Model):
@@ -110,7 +114,6 @@ class Review(models.Model):
     )
     title = models.ForeignKey(
         'Title',
-        related_name='reviews',
         on_delete=models.CASCADE,
         verbose_name='Произведение',
     )
@@ -118,6 +121,7 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
+        default_related_name = 'reviews'
 
     def __str__(self):
-        return f'Отзыв {self.author} на "{self.title}"'
+        return f'Отзыв {self.author} на "{self.title[:LENGTH_OF_REVIEW]}"'
