@@ -1,6 +1,7 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework.viewsets import ModelViewSet
 
 from api.viewsets import BaseViewSet
@@ -27,7 +28,8 @@ class GenreViewSet(BaseViewSet):
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('category__slug', 'genre__slug', 'name', 'year')
 
     def get_queryset(self):
         queryset = super().get_queryset()
