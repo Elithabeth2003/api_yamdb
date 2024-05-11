@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,6 +11,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+AUTH_USER_MODEL = 'users.User'
 
 # Application definition
 
@@ -21,6 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
+    'rest_framework',
+    'users',
     'reviews',
     'api',
 ]
@@ -87,7 +91,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
 
@@ -97,6 +101,26 @@ USE_L10N = True
 
 USE_TZ = True
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+
+SENDER_EMAIL = 'api_yamdb@yamail.com'
 
 # Static files (CSS, JavaScript, Images)
 
