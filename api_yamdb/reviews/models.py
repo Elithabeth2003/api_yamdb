@@ -94,7 +94,7 @@ class Comment(models.Model):
         default_related_name = 'comments'
 
     def __str__(self):
-        return f'Комментарий {self.author} на {self.review[:LENGTH_OF_COMMENT]}'
+        return f'Комментарий {self.author} на {self.review}'
     
 
 class Review(models.Model):
@@ -124,4 +124,4 @@ class Review(models.Model):
         default_related_name = 'reviews'
 
     def __str__(self):
-        return f'Отзыв {self.author} на "{self.title[:LENGTH_OF_REVIEW]}"'
+        return f'Отзыв {self.author} на "{self.title}"'
