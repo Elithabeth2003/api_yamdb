@@ -22,11 +22,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_filters',
     'rest_framework',
+    'django_filters',
     'users',
     'reviews',
     'api',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -93,6 +94,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-RU'
 
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -127,3 +129,10 @@ SENDER_EMAIL = 'api_yamdb@yamail.com'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 5,
+}
