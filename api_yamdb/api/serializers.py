@@ -5,19 +5,21 @@ from reviews.models import Category, Genre, Title, Comment, Review
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
-        exclude = ('id',)
         model = Category
-        read_only_fields = ('name',)
+        fields = (
+            'name',
+            'slug'
+        )
 
 
 class GenreSerializer(serializers.ModelSerializer):
-
     class Meta:
-        exclude = ('id',)
         model = Genre
-        read_only_fields = ('name',)
+        fields = (
+            'name',
+            'slug'
+        )
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -26,9 +28,16 @@ class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField()
 
     class Meta:
-        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+        fields = (
+            'id',
+            'name',
+            'year',
+            'rating',
+            'description',
+            'genre',
+            'category'
+        )
         model = Title
-        read_only_fields = ('rating',)
 
 
 class CommentSerializer(serializers.ModelSerializer):
