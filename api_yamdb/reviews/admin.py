@@ -4,7 +4,8 @@ from .models import Category, Comment, Genre, Title, Review
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-
+from import_export.fields import Field
+from import_export.widgets import DateTimeWidget, ForeignKeyWidget
 
 class CategoryResource(resources.ModelResource):
 
@@ -31,7 +32,8 @@ class GenreAdmin(ImportExportModelAdmin):
 class TitleResource(resources.ModelResource):
 
     class Meta:
-        model = Title
+        model = Title     
+
 
 class TitleAdmin(ImportExportModelAdmin):
     resource_classes = [TitleResource]
@@ -41,9 +43,17 @@ class TitleAdmin(ImportExportModelAdmin):
 
 
 class ReviewResource(resources.ModelResource):
+    title = Field(column_name='title_id', attribute='title',
+                  widget=ForeignKeyWidget(Title, 'pk', coerce_to_string=False))
+    pub_date = Field(
+        column_name='pub_date',
+        attribute='pub_date',
+        widget=DateTimeWidget(format='%Y-%m-%dT%H:%M:%S.%fZ')
+    )
 
     class Meta:
         model = Review
+
 
 class ReviewAdmin(ImportExportModelAdmin):
     resource_classes = [ReviewResource]
@@ -52,6 +62,13 @@ class ReviewAdmin(ImportExportModelAdmin):
 
 
 class CommentResource(resources.ModelResource):
+    review = Field(column_name='review_id', attribute='review',
+                            widget=ForeignKeyWidget(Review, 'pk', coerce_to_string=False))
+    pub_date = Field(
+        column_name='pub_date',
+        attribute='pub_date',
+        widget=DateTimeWidget(format='%Y-%m-%dT%H:%M:%S.%fZ')
+    )
 
     class Meta:
         model = Comment
