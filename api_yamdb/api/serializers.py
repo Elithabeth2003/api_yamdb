@@ -36,7 +36,6 @@ class TitleSerializer(serializers.ModelSerializer):
             'category'
         )
         model = Title
-        depth = 1
 
 
 class CommentSerializer(serializers.ModelSerializer):
