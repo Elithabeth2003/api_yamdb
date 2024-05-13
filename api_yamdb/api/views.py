@@ -10,7 +10,8 @@ from api.serializers import (
     GenreSerializer,
     ReadTitleSerializer,
     WriteTitleSerializer,
-    CommentSerializer,
+    ReadCommentSerializer,
+    WriteCommentSerializer,
     ReadReviewSerializer,
     WriteReviewSerializer
 )
@@ -64,15 +65,19 @@ class TitleViewSet(ModelViewSet):
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
     permission_classes = (AdminModeratorAuthorPermission,)
     http_method_names = ('get', 'post', 'patch', 'delete')
 
     def __get_review(self):
-        return get_object_or_404(Comment, pk=self.kwargs.get('review_id'))
+        return get_object_or_404(Review, pk=self.kwargs.get('review_id'))
 
     def get_queryset(self):
         return Comment.objects.filter(review=self.__get_review())
+    
+    def get_serializer_class(self):
+        if self.request.method in SAFE_METHODS:
+            return ReadCommentSerializer
+        return WriteCommentSerializer
 
     def perform_create(self, serializer):
         serializer.save(
@@ -83,7 +88,6 @@ class CommentViewSet(ModelViewSet):
 
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
-    #serializer_class = ReviewSerializer
     permission_classes = (AdminModeratorAuthorPermission,)
     http_method_names = ('get', 'post', 'patch', 'delete')
 
