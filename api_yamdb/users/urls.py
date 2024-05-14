@@ -1,7 +1,4 @@
-"""
-Модуль URL определяет URL-шаблоны для конечных точек API для
-аутентификации и управления пользователями.
-"""
+"""Модуль URL определяет URL-шаблоны для конечных точек API."""
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
