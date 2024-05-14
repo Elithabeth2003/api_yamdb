@@ -1,9 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
-# добавил пока себе тоже, предлагаю отдельный файл для констант добавить
-LENGTH_OF_NAME = 30
+from reviews.constants import LENGTH_OF_NAME
 
 
 class User(AbstractUser):

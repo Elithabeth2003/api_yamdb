@@ -1,9 +1,9 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
+
 from api.viewsets import BaseViewSet
 from api.filters import TitleFilter
 from api.serializers import (
@@ -74,7 +74,7 @@ class CommentViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Comment.objects.filter(review=self.__get_review())
-    
+
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return ReadCommentSerializer
@@ -97,11 +97,11 @@ class ReviewViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Review.objects.filter(title=self.__get_title())
-    
+
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return ReadReviewSerializer
-        return WriteReviewSerializer    
+        return WriteReviewSerializer
 
     def perform_create(self, serializer):
         serializer.save(

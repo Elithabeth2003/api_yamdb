@@ -1,13 +1,12 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.utils import IntegrityError
+
+from reviews.constants import LENGTH_OF_NAME
 from reviews.validators import validate_year
 
-
 User = get_user_model()
-LENGTH_OF_NAME = 30
-LENGTH_OF_REVIEW = 100
-LENGTH_OF_COMMENT = 100
 
 
 class Category(models.Model):
@@ -25,12 +24,12 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256, verbose_name='Название',)
+    name = models.CharField(max_length=256, verbose_name='Название', )
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
     class Meta:
         verbose_name = 'жанр'
-        verbose_name_plural = 'жанры'        
+        verbose_name_plural = 'жанры'
         ordering = ['name']
         default_related_name = 'genre'
 
@@ -73,7 +72,7 @@ class Title(models.Model):
 
 
 class Comment(models.Model):
-    text = models.TextField('Текст комментария',)
+    text = models.TextField('Текст комментария', )
     author = models.ForeignKey(
         User,
         verbose_name='Автор комментария',
@@ -96,17 +95,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Комментарий {self.author} на {self.review}'
-    
+
 
 class Review(models.Model):
-    text = models.TextField('Текст отзыва',)
+    text = models.TextField('Текст отзыва', )
     author = models.ForeignKey(
         User,
         verbose_name='Автор отзыва',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     score = models.IntegerField(
-        'Оценка', 
+        'Оценка',
         validators=[MaxValueValidator(10), MinValueValidator(1)]
     )
     pub_date = models.DateTimeField(
@@ -123,7 +122,17 @@ class Review(models.Model):
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
         default_related_name = 'reviews'
-        unique_together = ('author', 'title')
 
     def __str__(self):
         return f'Отзыв {self.author} на "{self.title}"'
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            if Review.objects.filter(
+                    author=self.author,
+                    title=self.title
+            ).exists():
+                raise IntegrityError(
+                    'Отзыв на это произведение уже оставлен!'
+                )
+        super().save(*args, **kwargs)

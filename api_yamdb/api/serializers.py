@@ -11,6 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
             'slug'
         )
 
+
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
@@ -120,3 +121,12 @@ class WriteReviewSerializer(serializers.ModelSerializer):
             'score',
         )
         model = Review
+
+    def validate(self, data):
+        title_id = self.context.get('view').kwargs.get('title_id')
+        if self.context['request'].method == 'POST' and Review.objects.filter(
+            title=title_id, author=self.context['request'].user
+        ).exists():
+            raise serializers.ValidationError(
+                'Отзыв на это произведение уже оставлен!')
+        return data

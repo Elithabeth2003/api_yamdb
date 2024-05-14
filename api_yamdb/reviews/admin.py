@@ -1,16 +1,16 @@
 from django.contrib import admin
-
-from .models import Category, Comment, Genre, Title, Review
-
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 from import_export.widgets import DateTimeWidget, ForeignKeyWidget
 
-class CategoryResource(resources.ModelResource):
+from .models import Category, Comment, Genre, Title, Review
 
+
+class CategoryResource(resources.ModelResource):
     class Meta:
         model = Category
+
 
 class CategoryAdmin(ImportExportModelAdmin):
     resource_classes = [CategoryResource]
@@ -19,9 +19,9 @@ class CategoryAdmin(ImportExportModelAdmin):
 
 
 class GenreResource(resources.ModelResource):
-
     class Meta:
         model = Genre
+
 
 class GenreAdmin(ImportExportModelAdmin):
     resource_classes = [GenreResource]
@@ -30,9 +30,8 @@ class GenreAdmin(ImportExportModelAdmin):
 
 
 class TitleResource(resources.ModelResource):
-
     class Meta:
-        model = Title     
+        model = Title
 
 
 class TitleAdmin(ImportExportModelAdmin):
@@ -58,12 +57,14 @@ class ReviewResource(resources.ModelResource):
 class ReviewAdmin(ImportExportModelAdmin):
     resource_classes = [ReviewResource]
     list_display = ('author', 'title', 'score', 'pub_date')
-    search_fields = ('author','score',)
+    search_fields = ('author', 'score',)
 
 
 class CommentResource(resources.ModelResource):
     review = Field(column_name='review_id', attribute='review',
-                            widget=ForeignKeyWidget(Review, 'pk', coerce_to_string=False))
+                   widget=ForeignKeyWidget(
+                       Review, 'pk', coerce_to_string=False)
+                   )
     pub_date = Field(
         column_name='pub_date',
         attribute='pub_date',
@@ -72,6 +73,7 @@ class CommentResource(resources.ModelResource):
 
     class Meta:
         model = Comment
+
 
 class CommentAdmin(ImportExportModelAdmin):
     resource_classes = [CommentResource]
