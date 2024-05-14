@@ -17,12 +17,15 @@ class Category(models.Model):
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
         ordering = ['name']
         default_related_name = 'category'
 
     def __str__(self):
+        """Возвращает строковое представление объекта категории."""
         return self.name[:LENGTH_OF_NAME]
 
 
@@ -33,12 +36,15 @@ class Genre(models.Model):
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
         ordering = ['name']
         default_related_name = 'genre'
 
     def __str__(self):
+        """Возвращает строковое представление объекта жанра."""
         return self.name[:LENGTH_OF_NAME]
 
 
@@ -69,12 +75,15 @@ class Title(models.Model):
     )
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'произведение'
         verbose_name_plural = 'произведения'
         ordering = ('name',)
         default_related_name = 'titles'
 
     def __str__(self):
+        """Возвращает строковое представление объекта произведения."""
         return self.name[:LENGTH_OF_NAME]
 
 
@@ -98,11 +107,14 @@ class Comment(models.Model):
     )
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
         default_related_name = 'comments'
 
     def __str__(self):
+        """Возвращает строковое представление объекта комментария."""
         return f'Комментарий {self.author} на {self.review}'
 
 
@@ -130,14 +142,18 @@ class Review(models.Model):
     )
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
         default_related_name = 'reviews'
 
     def __str__(self):
+        """Возвращает строковое представление объекта отзыва."""
         return f'Отзыв {self.author} на "{self.title}"'
 
     def save(self, *args, **kwargs):
+        """Переопределение метода save для проверки уникальности отзыва."""
         if self.pk is None:
             if Review.objects.filter(
                     author=self.author,

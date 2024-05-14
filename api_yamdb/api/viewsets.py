@@ -1,4 +1,4 @@
-"""Модуль, содержащий представления (viewsets) для работы с конечными точками API."""
+"""Модуль, содержащий представления для работы с конечными точками API."""
 from rest_framework import viewsets, mixins
 from rest_framework.filters import SearchFilter
 
@@ -12,10 +12,11 @@ class BaseViewSet(
     viewsets.GenericViewSet
 ):
     """
-    Базовый класс для представлений (viewsets) с поддержкой операций списка, создания и удаления.
+    Базовый класс для представлений с поддержкой необходимых операций
 
     Включает в себя функциональность списочного представления (ListModelMixin),
-    представления создания объекта (CreateModelMixin) и представления удаления объекта (DestroyModelMixin).
+    представления создания объекта (CreateModelMixin)
+    и представления удаления объекта (DestroyModelMixin).
     """
 
     filter_backends = (SearchFilter,)

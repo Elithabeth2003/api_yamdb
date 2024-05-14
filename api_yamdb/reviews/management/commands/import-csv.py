@@ -1,4 +1,7 @@
-"""Модуль management команды для импорта данных из CSV файлов в базу данных SQLite."""
+"""
+Модуль management команды для импорта данных
+из CSV файлов в базу данных SQLite.
+"""
 import csv
 import sqlite3
 
@@ -36,6 +39,7 @@ class Command(BaseCommand):
     """Команда для импорта данных из CSV файлов в базу данных SQLite."""
 
     def handle(self, *args, **kwargs) -> None:
+        """Обрабатывает импорт данных из CSV-файлов в базу данных SQLite."""
         for file, table in zip(files, tables):
             try:
                 print('start download', file)

@@ -1,3 +1,9 @@
+"""
+Модуль для импорта данных из CSV-файлов в базу данных SQLite.
+
+Этот модуль содержит функции для импорта данных
+из CSV-файлов в базу данных SQLite.
+"""
 import csv
 import sqlite3
 
@@ -9,6 +15,7 @@ tables = ('reviews_category', 'reviews_genre', 'reviews_title',
 
 
 def import_csv_to_sqlite(csv_file, table_name):
+    """Импортирует данные из CSV-файла в базу данных SQLite."""
     conn = sqlite3.connect('api_yamdb/db.sqlite3')
     cursor = conn.cursor()
     with open(csv_file, 'r') as file:

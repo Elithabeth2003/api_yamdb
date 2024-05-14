@@ -1,4 +1,4 @@
-"""Модуль views определяет представления (views) для обработки HTTP-запросов к API."""
+"""Модуль views определяет представления для обработки HTTP-запросов к API."""
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.conf import settings
@@ -20,6 +20,7 @@ from .permissions import UsersPermission
 
 class UserViewSet(viewsets.ModelViewSet):
     """Представление для операций с пользователями."""
+
     queryset = User.objects.all()
     serializer_class = AdminSerializer
     permission_classes = (UsersPermission,)
@@ -57,7 +58,8 @@ class SignUpView(APIView):
 
         Создает нового пользователя на основе введенных данных.
         Если пользователь уже существует, возвращает ошибку.
-        Если email уже зарегистрирован, но с другим именем пользователя, возвращает данные этого пользователя.
+        Если email уже зарегистрирован, но с другим именем пользователя,
+        возвращает данные этого пользователя.
         """
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
@@ -112,8 +114,9 @@ class GetTokenView(TokenObtainPairView):
         """
         Аутентифицирует пользователя и выдает токен аутентификации.
 
-        Аутентифицирует пользователя по имени пользователя и коду подтверждения.
-        Если аутентификация прошла успешно, выдает токен аутентификации.
+        Аутентифицирует пользователя по имени пользователя и
+        коду подтверждения. Если аутентификация прошла успешно,
+        выдает токен аутентификации.
         """
         serializer = GetTokenSerializer(data=request.data)
         if serializer.is_valid():

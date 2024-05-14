@@ -1,9 +1,12 @@
 """
-Модуль, определяющий административные классы и ресурсы для административной панели Django.
+Модуль, определяющий административные классы и ресурсы
+для административной панели Django.
 
-Этот модуль содержит административные классы, используемые для отображения и управления моделями Django
-в административной панели Django. Каждый административный класс связан с соответствующим ресурсом,
-который используется для экспорта и импорта данных с использованием пакета import-export.
+Этот модуль содержит административные классы, используемые для отображения
+и управления моделями Django в административной панели Django.
+Каждый административный класс связан с соответствующим ресурсом,
+который используется для экспорта и импорта данных с использованием
+пакета import-export.
 """
 from django.contrib import admin
 from import_export import resources
@@ -18,6 +21,8 @@ class CategoryResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Category."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Category
 
 
@@ -33,6 +38,8 @@ class GenreResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Genre."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Genre
 
 
@@ -48,6 +55,8 @@ class TitleResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Title."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Title
 
 
@@ -72,6 +81,8 @@ class ReviewResource(resources.ModelResource):
     )
 
     class Meta:
+        """Класс Meta."""
+
         model = Review
 
 
@@ -97,6 +108,8 @@ class CommentResource(resources.ModelResource):
     )
 
     class Meta:
+        """Класс Meta."""
+
         model = Comment
 
 

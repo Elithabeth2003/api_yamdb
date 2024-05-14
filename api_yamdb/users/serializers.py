@@ -1,4 +1,7 @@
-"""Модуль serializers определяет сериализаторы для преобразования объектов моделей в JSON и обратно."""
+"""
+Модуль serializers определяет сериализаторы
+для преобразования объектов моделей в JSON и обратно.
+"""
 import re
 
 from rest_framework import serializers
@@ -15,6 +18,8 @@ class AdminSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        """Класс Meta."""
+
         model = User
         fields = (
             'username',
@@ -50,6 +55,8 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        """Класс Meta."""
+
         model = User
         fields = (
             'username',
