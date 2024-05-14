@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
 from api.viewsets import BaseViewSet
+from api.filters import TitleFilter
 from api.serializers import (
     CategorySerializer,
     GenreSerializer,
@@ -34,7 +35,7 @@ class TitleViewSet(ModelViewSet):
     queryset = Title.objects.all()
     permission_classes = (AdminOrReadOnlyPermission,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'year', 'category__slug', 'genre__slug')
+    filterset_class = TitleFilter
     http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_queryset(self):

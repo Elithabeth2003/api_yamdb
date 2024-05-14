@@ -16,7 +16,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name = 'категория'
-        verbose_name_plural = 'категории'        
+        verbose_name_plural = 'категории'
         ordering = ['name']
         default_related_name = 'category'
 
@@ -64,7 +64,7 @@ class Title(models.Model):
 
     class Meta:
         verbose_name = 'произведение'
-        verbose_name_plural = 'произведения'        
+        verbose_name_plural = 'произведения'
         ordering = ('name',)
         default_related_name = 'titles'
 

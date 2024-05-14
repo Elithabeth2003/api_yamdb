@@ -39,11 +39,11 @@ class ReadTitleSerializer(serializers.ModelSerializer):
 
 
 class WriteTitleSerializer(serializers.ModelSerializer):
-    genre = serializers.SlugRelatedField(many=True,
-        slug_field='slug', queryset = Genre.objects.all()
+    genre = serializers.SlugRelatedField(
+        many=True, slug_field='slug', queryset=Genre.objects.all()
     )
     category = serializers.SlugRelatedField(
-        slug_field='slug', queryset = Category.objects.all()
+        slug_field='slug', queryset=Category.objects.all()
     )
 
     class Meta:
@@ -66,9 +66,9 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 
-            'text', 
-            'author', 
+            'id',
+            'text',
+            'author',
             'pub_date'
         )
         model = Comment
@@ -82,8 +82,8 @@ class WriteCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 
-            'text', 
+            'id',
+            'text',
             'author',
         )
         model = Comment
@@ -97,10 +97,10 @@ class ReadReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 
-            'text', 
-            'author', 
-            'score', 
+            'id',
+            'text',
+            'author',
+            'score',
             'pub_date'
         )
         model = Review
@@ -114,9 +114,9 @@ class WriteReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 
-            'text', 
-            'author', 
+            'id',
+            'text',
+            'author',
             'score',
         )
         model = Review
