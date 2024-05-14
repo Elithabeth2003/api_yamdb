@@ -1,7 +1,8 @@
 """
 Модуль, определяющий модель пользователей приложения.
 
-Этот модуль содержит определение пользовательской модели User, основанной на абстрактной модели AbstractUser из Django.
+Этот модуль содержит определение пользовательской модели User, основанной
+на абстрактной модели AbstractUser из Django.
 """
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -56,15 +57,19 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
+        """Проверяет, является ли пользователь администратором."""
         return self.role == self.ADMIN or self.is_superuser
 
     @property
     def is_moderator(self):
+        """Проверяет, является ли пользователь модератором."""
         return self.role == self.MODERATOR
 
     @property
     def is_user(self):
+        """Проверяет, является ли пользователь обычным пользователем."""
         return self.role == self.USER
 
     def __str__(self):
+        """Возвращает строковое представление объекта пользователя."""
         return self.username[:LENGTH_OF_NAME]

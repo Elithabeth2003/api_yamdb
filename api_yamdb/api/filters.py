@@ -12,5 +12,7 @@ class TitleFilter(FilterSet):
     category = CharFilter(field_name='category__slug')
 
     class Meta:
+        """Класс Meta."""
+
         model = Title
         fields = ['year']
