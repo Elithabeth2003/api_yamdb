@@ -1,3 +1,4 @@
+"""Модуль views определяет представления (views) для обработки HTTP-запросов к API."""
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.conf import settings
@@ -18,6 +19,7 @@ from .permissions import UsersPermission
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """Представление для операций с пользователями."""
     queryset = User.objects.all()
     serializer_class = AdminSerializer
     permission_classes = (UsersPermission,)
@@ -32,6 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def my_profile(self, request):
+        """Представление профиля текущего пользователя."""
         serializer = UserSerializer(request.user)
         if request.method == 'PATCH':
             serializer = UserSerializer(
@@ -44,9 +47,18 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class SignUpView(APIView):
+    """Представление для регистрации новых пользователей."""
+
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        """
+        Создает нового пользователя.
+
+        Создает нового пользователя на основе введенных данных.
+        Если пользователь уже существует, возвращает ошибку.
+        Если email уже зарегистрирован, но с другим именем пользователя, возвращает данные этого пользователя.
+        """
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
             email = request.data.get('email')
@@ -92,9 +104,17 @@ class SignUpView(APIView):
 
 
 class GetTokenView(TokenObtainPairView):
+    """Представление для получения токена аутентификации пользователя."""
+
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
+        """
+        Аутентифицирует пользователя и выдает токен аутентификации.
+
+        Аутентифицирует пользователя по имени пользователя и коду подтверждения.
+        Если аутентификация прошла успешно, выдает токен аутентификации.
+        """
         serializer = GetTokenSerializer(data=request.data)
         if serializer.is_valid():
             user = get_object_or_404(

@@ -1,3 +1,4 @@
+"""Модуль serializers определяет сериализаторы для преобразования объектов моделей в JSON и обратно."""
 import re
 
 from rest_framework import serializers
@@ -6,6 +7,8 @@ from .models import User
 
 
 class AdminSerializer(serializers.ModelSerializer):
+    """Сериализатор для административных операций с моделью User."""
+
     role = serializers.ChoiceField(
         choices=User.ROLE_CHOICES,
         required=False
@@ -23,6 +26,11 @@ class AdminSerializer(serializers.ModelSerializer):
         )
 
     def validate_username(self, value):
+        """
+        Проверяет правильность формата имени пользователя.
+
+        Проверяет, соответствует ли имя пользователя заданному формату.
+        """
         if not re.match(r'^[\w.@+-]+$', value):
             raise serializers.ValidationError(
                 "Содержимое поля 'username' не "
@@ -32,6 +40,8 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для базовых операций с моделью User."""
+
     username = serializers.SlugField(
         max_length=150,
     )
@@ -57,6 +67,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.Serializer):
+    """Сериализатор для регистрации нового пользователя."""
+
     username = serializers.CharField(
         max_length=150,
     )
@@ -65,6 +77,11 @@ class SignUpSerializer(serializers.Serializer):
     )
 
     def validate_username(self, value):
+        """
+        Проверяет правильность формата имени пользователя.
+
+        Проверяет, соответствует ли имя пользователя заданному формату.
+        """
         if not re.match(r'^[\w.@+-]+$', value):
             raise serializers.ValidationError(
                 "Содержимое поля 'username' не "
@@ -73,6 +90,11 @@ class SignUpSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
+        """
+        Проверяет правильность введенных данных для регистрации.
+
+        Проверяет, не используется ли имя 'me' в качестве имени пользователя.
+        """
         if attrs['username'] == 'me':
             raise serializers.ValidationError(
                 "Использовать имя 'me' в качестве username запрещено!"
@@ -81,6 +103,8 @@ class SignUpSerializer(serializers.Serializer):
 
 
 class GetTokenSerializer(serializers.Serializer):
+    """Сериализатор для получения токена аутентификации пользователя."""
+
     username = serializers.CharField(
         max_length=150,
     )

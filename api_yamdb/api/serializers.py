@@ -1,9 +1,18 @@
+"""
+Сериализаторы для взаимодействия с моделями в API.
+
+Этот модуль содержит сериализаторы для взаимодействия с моделями, такими как Category, Genre, Title, Comment и Review,
+в рамках API Django REST Framework.
+
+"""
 from rest_framework import serializers
 
 from reviews.models import Category, Genre, Title, Comment, Review
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Category."""
+
     class Meta:
         model = Category
         fields = (
@@ -13,6 +22,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Genre."""
+
     class Meta:
         model = Genre
         fields = (
@@ -22,6 +33,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class ReadTitleSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения информации о произведении (Title)."""
+
     genre = GenreSerializer(many=True,)
     category = CategorySerializer()
     rating = serializers.IntegerField(read_only=True)
@@ -40,6 +53,8 @@ class ReadTitleSerializer(serializers.ModelSerializer):
 
 
 class WriteTitleSerializer(serializers.ModelSerializer):
+    """Сериализатор для записи информации о произведении (Title)."""
+
     genre = serializers.SlugRelatedField(
         many=True, slug_field='slug', queryset=Genre.objects.all()
     )
@@ -60,6 +75,8 @@ class WriteTitleSerializer(serializers.ModelSerializer):
 
 
 class ReadCommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения информации о комментарии (Comment)."""
+
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -76,6 +93,8 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
 
 class WriteCommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для записи информации о комментарии (Comment)."""
+
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -91,6 +110,8 @@ class WriteCommentSerializer(serializers.ModelSerializer):
 
 
 class ReadReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения информации о отзыве (Review)."""
+
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -108,6 +129,8 @@ class ReadReviewSerializer(serializers.ModelSerializer):
 
 
 class WriteReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для записи информации о отзыве (Review)."""
+
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -123,6 +146,12 @@ class WriteReviewSerializer(serializers.ModelSerializer):
         model = Review
 
     def validate(self, data):
+        """
+        Проверка валидности данных.
+
+        Проверяет, что пользователь не оставляет повторные отзывы для одного произведения.
+
+        """
         title_id = self.context.get('view').kwargs.get('title_id')
         if self.context['request'].method == 'POST' and Review.objects.filter(
             title=title_id, author=self.context['request'].user

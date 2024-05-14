@@ -5,6 +5,23 @@ import sys
 
 
 def main():
+    """
+    Run the Django management command line interface.
+
+    This function sets the DJANGO_SETTINGS_MODULE environment variable to 'api_yamdb.settings',
+    which specifies the settings module for the Django project. Then it attempts to import
+    execute_from_command_line function from django.core.management module.
+
+    If Django is not installed or not available on the PYTHONPATH environment variable, it raises
+    an ImportError with a helpful error message.
+
+    Usage:
+        Call this function to execute Django management command line interface.
+
+    Raises:
+        ImportError: If Django is not installed or not available on the PYTHONPATH environment variable.
+
+    """
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'api_yamdb.settings')
     try:
         from django.core.management import execute_from_command_line

@@ -1,3 +1,8 @@
+"""
+Модуль, определяющий модель пользователей приложения.
+
+Этот модуль содержит определение пользовательской модели User, основанной на абстрактной модели AbstractUser из Django.
+"""
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -5,6 +10,8 @@ from reviews.constants import LENGTH_OF_NAME
 
 
 class User(AbstractUser):
+    """Модель пользователя приложения."""
+
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'

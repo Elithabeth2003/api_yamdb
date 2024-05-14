@@ -1,3 +1,4 @@
+"""Модуль, определяющий модели для приложения отзывов."""
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -10,6 +11,8 @@ User = get_user_model()
 
 
 class Category(models.Model):
+    """Модель для категорий произведений."""
+
     name = models.CharField(max_length=256, verbose_name='Название')
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
@@ -24,6 +27,8 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
+    """Модель для жанров произведений."""
+
     name = models.CharField(max_length=256, verbose_name='Название', )
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
@@ -38,6 +43,8 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
+    """Модель для произведений."""
+
     name = models.CharField(
         max_length=256,
         verbose_name='Название')
@@ -72,6 +79,8 @@ class Title(models.Model):
 
 
 class Comment(models.Model):
+    """Модель для комментариев к отзывам на произведения."""
+
     text = models.TextField('Текст комментария', )
     author = models.ForeignKey(
         User,
@@ -98,6 +107,8 @@ class Comment(models.Model):
 
 
 class Review(models.Model):
+    """Модель для отзывов на произведения."""
+
     text = models.TextField('Текст отзыва', )
     author = models.ForeignKey(
         User,
