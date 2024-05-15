@@ -9,8 +9,6 @@ class AdminOrReadOnlyPermission(BasePermission):
     """
     Разрешение для доступа к конечным точкам API
     только для администраторов или в режиме "только чтение".
-
-    Проверяет, имеет ли пользователь право на доступ к конечной точке API.
     """
 
     def has_permission(self, request, view):

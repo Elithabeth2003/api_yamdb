@@ -17,6 +17,8 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для модели Category."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Category
         fields = (
             'name',
@@ -28,6 +30,8 @@ class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Genre."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Genre
         fields = (
             'name',
@@ -43,6 +47,8 @@ class ReadTitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
+        """Класс Meta."""
+
         fields = (
             'id',
             'name',
@@ -67,6 +73,8 @@ class WriteTitleSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        """Класс Meta."""
+
         fields = (
             'id',
             'name',
@@ -76,6 +84,7 @@ class WriteTitleSerializer(serializers.ModelSerializer):
             'category'
         )
         model = Title
+
 
     def validate_year(self, value):
         """Проверяет, что год не превышает текущий год."""
@@ -97,6 +106,8 @@ class CommentSerializer(serializers.ModelSerializer):
     pub_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
+        """Класс Meta."""
+
         fields = (
             'id',
             'text',
@@ -116,6 +127,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     pub_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
+        """Класс Meta."""
+
         fields = (
             'id',
             'text',

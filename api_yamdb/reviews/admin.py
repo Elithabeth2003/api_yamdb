@@ -21,6 +21,8 @@ class CategoryResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Category."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Category
 
 
@@ -37,6 +39,8 @@ class GenreResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Genre."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Genre
 
 
@@ -53,6 +57,8 @@ class TitleResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Title."""
 
     class Meta:
+        """Класс Meta."""
+
         model = Title
 
 
@@ -78,6 +84,8 @@ class ReviewResource(resources.ModelResource):
     )
 
     class Meta:
+        """Класс Meta."""
+
         model = Review
 
 
@@ -104,6 +112,8 @@ class CommentResource(resources.ModelResource):
     )
 
     class Meta:
+        """Класс Meta."""
+
         model = Comment
 
 

@@ -1,4 +1,4 @@
-"""Модуль filters определяет фильтры для конечной точки API, связанной с моделью Title."""
+"""Модуль, определяющий фильтры для конечной точки API, связанной с Title."""
 from django_filters.rest_framework import CharFilter, FilterSet
 
 from reviews.models import Title

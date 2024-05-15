@@ -19,6 +19,7 @@ class CategoryGenreBaseModel(models.Model):
         ordering = ['name']
 
     def __str__(self):
+        """Возвращает строковое представление объекта категории."""
         return self.name[:LENGTH_OF_NAME]
 
 
@@ -36,6 +37,8 @@ class Genre(CategoryGenreBaseModel):
     """Модель для жанров произведений."""
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
         ordering = ['name']
@@ -69,12 +72,15 @@ class Title(models.Model):
     )
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'произведение'
         verbose_name_plural = 'произведения'
         ordering = ('name',)
         default_related_name = 'titles'
 
     def __str__(self):
+        """Возвращает строковое представление объекта произведения."""
         return self.name[:LENGTH_OF_NAME]
 
 
@@ -107,11 +113,14 @@ class Comment(CommentReviewBaseModel):
     )
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
         default_related_name = 'comments'
 
     def __str__(self):
+        """Возвращает строковое представление объекта комментария."""
         return f'Комментарий {self.author} на {self.review}'
 
 
@@ -129,10 +138,13 @@ class Review(CommentReviewBaseModel):
     )
 
     class Meta:
+        """Класс Meta."""
+
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
         default_related_name = 'reviews'
         unique_together = [['author', 'title']]
 
     def __str__(self):
+        """Возвращает строковое представление объекта отзыва."""
         return f'Отзыв {self.author} на "{self.title}"'
