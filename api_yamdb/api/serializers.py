@@ -6,6 +6,8 @@
 в рамках API Django REST Framework.
 
 """
+from datetime import date
+
 from rest_framework import serializers
 
 from reviews.models import Category, Genre, Title, Comment, Review
@@ -15,8 +17,6 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для модели Category."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Category
         fields = (
             'name',
@@ -28,8 +28,6 @@ class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Genre."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Genre
         fields = (
             'name',
@@ -45,8 +43,6 @@ class ReadTitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        """Класс Meta."""
-
         fields = (
             'id',
             'name',
@@ -57,6 +53,7 @@ class ReadTitleSerializer(serializers.ModelSerializer):
             'category'
         )
         model = Title
+        read_only_fields = fields
 
 
 class WriteTitleSerializer(serializers.ModelSerializer):
@@ -70,8 +67,6 @@ class WriteTitleSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        """Класс Meta."""
-
         fields = (
             'id',
             'name',
@@ -82,18 +77,26 @@ class WriteTitleSerializer(serializers.ModelSerializer):
         )
         model = Title
 
+    def validate_year(self, value):
+        """Проверяет, что год не превышает текущий год."""
+        if value > date.today().year:
+            raise serializers.ValidationError(
+                f"""Введенный год ({value})
+                не может быть больше текущего ({date.today().year})."""
+            )
+        return value
 
-class ReadCommentSerializer(serializers.ModelSerializer):
-    """Сериализатор для чтения информации о комментарии (Comment)."""
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения и записи информации о комментарии (Comment)."""
 
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
     )
+    pub_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
-        """Класс Meta."""
-
         fields = (
             'id',
             'text',
@@ -103,36 +106,16 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         model = Comment
 
 
-class WriteCommentSerializer(serializers.ModelSerializer):
-    """Сериализатор для записи информации о комментарии (Comment)."""
+class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения и записи информации о отзыве (Review)."""
 
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
     )
+    pub_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
-        """Класс Meta."""
-
-        fields = (
-            'id',
-            'text',
-            'author',
-        )
-        model = Comment
-
-
-class ReadReviewSerializer(serializers.ModelSerializer):
-    """Сериализатор для чтения информации о отзыве (Review)."""
-
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-    )
-
-    class Meta:
-        """Класс Meta."""
-
         fields = (
             'id',
             'text',
@@ -142,25 +125,11 @@ class ReadReviewSerializer(serializers.ModelSerializer):
         )
         model = Review
 
-
-class WriteReviewSerializer(serializers.ModelSerializer):
-    """Сериализатор для записи информации о отзыве (Review)."""
-
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-    )
-
-    class Meta:
-        """Класс Meta."""
-
-        fields = (
-            'id',
-            'text',
-            'author',
-            'score',
-        )
-        model = Review
+    def validate_score(self, value):
+        """Валидация оценки."""
+        if value < 1 or value > 10:
+            raise serializers.ValidationError('Оценка должна быть от 1 до 10.')
+        return value
 
     def validate(self, data):
         """
@@ -174,5 +143,6 @@ class WriteReviewSerializer(serializers.ModelSerializer):
             title=title_id, author=self.context['request'].user
         ).exists():
             raise serializers.ValidationError(
-                'Отзыв на это произведение уже оставлен!')
+                'Отзыв на это произведение уже оставлен!'
+            )
         return data

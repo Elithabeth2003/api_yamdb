@@ -16,7 +16,9 @@ def validate_year(value):
     Функция проверяет, является ли значение года четырехзначным числом
     и не превышает ли оно текущий год.
     """
-    if len(str(value)) != 4 or not isinstance(value, int):
-        raise ValidationError("Дата введена неправильно, введите 4 цифры.")
-    elif value > date.today().year:
-        raise ValidationError("Год не может быть больше текущего.")
+    if value > date.today().year:
+        raise ValidationError(
+            f"""Введенный год ({value})
+            не может быть больше текущего ({date.today().year})."""
+        )
+    return value

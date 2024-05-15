@@ -21,11 +21,10 @@ class CategoryResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Category."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Category
 
 
+@admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     """Административный класс для модели Category."""
 
@@ -38,11 +37,10 @@ class GenreResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Genre."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Genre
 
 
+@admin.register(Genre)
 class GenreAdmin(ImportExportModelAdmin):
     """Административный класс для модели Genre."""
 
@@ -55,11 +53,10 @@ class TitleResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Title."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Title
 
 
+@admin.register(Title)
 class TitleAdmin(ImportExportModelAdmin):
     """Административный класс для модели Title."""
 
@@ -81,11 +78,10 @@ class ReviewResource(resources.ModelResource):
     )
 
     class Meta:
-        """Класс Meta."""
-
         model = Review
 
 
+@admin.register(Review)
 class ReviewAdmin(ImportExportModelAdmin):
     """Административный класс для модели Review."""
 
@@ -108,20 +104,12 @@ class CommentResource(resources.ModelResource):
     )
 
     class Meta:
-        """Класс Meta."""
-
         model = Comment
 
 
+@admin.register(Comment)
 class CommentAdmin(ImportExportModelAdmin):
     """Административный класс для модели Comment."""
 
     resource_classes = [CommentResource]
     list_display = ('author', 'pub_date', 'review',)
-
-
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Genre, GenreAdmin)
-admin.site.register(Title, TitleAdmin)
-admin.site.register(Review, ReviewAdmin)
-admin.site.register(Comment, CommentAdmin)
