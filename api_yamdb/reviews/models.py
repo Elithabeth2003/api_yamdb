@@ -1,39 +1,40 @@
 """Модуль, определяющий модели для приложения отзывов."""
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
 from django.contrib.auth import get_user_model
-from django.db.utils import IntegrityError
+from django.db import models
 
-from reviews.constants import LENGTH_OF_NAME
+from reviews.constants import LENGTH_OF_NAME, MAX_VALUE, MIN_VALUE
 from reviews.validators import validate_year
 
 User = get_user_model()
 
-
-class Category(models.Model):
-    """Модель для категорий произведений."""
+class CategoryGenreBaseModel(models.Model):
+    """Базовая модель для категорий и жанров произведений."""
 
     name = models.CharField(max_length=256, verbose_name='Название')
     slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
     class Meta:
-        """Класс Meta."""
-
-        verbose_name = 'категория'
-        verbose_name_plural = 'категории'
+        abstract = True
         ordering = ['name']
-        default_related_name = 'category'
 
     def __str__(self):
         """Возвращает строковое представление объекта категории."""
         return self.name[:LENGTH_OF_NAME]
 
 
-class Genre(models.Model):
-    """Модель для жанров произведений."""
+class Category(CategoryGenreBaseModel):
+    """Модель для категорий произведений."""
 
-    name = models.CharField(max_length=256, verbose_name='Название', )
-    slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
+    class Meta:
+        verbose_name = 'категория'
+        verbose_name_plural = 'категории'
+        ordering = ['name']
+        default_related_name = 'categories'
+
+
+class Genre(CategoryGenreBaseModel):
+    """Модель для жанров произведений."""
 
     class Meta:
         """Класс Meta."""
@@ -41,11 +42,7 @@ class Genre(models.Model):
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
         ordering = ['name']
-        default_related_name = 'genre'
-
-    def __str__(self):
-        """Возвращает строковое представление объекта жанра."""
-        return self.name[:LENGTH_OF_NAME]
+        default_related_name = 'genres'
 
 
 class Title(models.Model):
@@ -87,19 +84,28 @@ class Title(models.Model):
         return self.name[:LENGTH_OF_NAME]
 
 
-class Comment(models.Model):
-    """Модель для комментариев к отзывам на произведения."""
+class CommentReviewBaseModel(models.Model):
+    """Базовая модель для комментариев и отзывов на произведения."""
 
-    text = models.TextField('Текст комментария', )
+    text = models.TextField(verbose_name='Текст')
     author = models.ForeignKey(
         User,
-        verbose_name='Автор комментария',
+        verbose_name='Автор',
         on_delete=models.CASCADE
     )
     pub_date = models.DateTimeField(
-        'Дата публикации комментария',
+        verbose_name='Дата публикации',
         auto_now_add=True
     )
+
+    class Meta:
+        abstract = True
+        ordering = ['-pub_date']
+
+
+class Comment(CommentReviewBaseModel):
+    """Модель для комментариев к отзывам на произведения."""
+
     review = models.ForeignKey(
         'Review',
         on_delete=models.CASCADE,
@@ -118,22 +124,12 @@ class Comment(models.Model):
         return f'Комментарий {self.author} на {self.review}'
 
 
-class Review(models.Model):
+class Review(CommentReviewBaseModel):
     """Модель для отзывов на произведения."""
 
-    text = models.TextField('Текст отзыва', )
-    author = models.ForeignKey(
-        User,
-        verbose_name='Автор отзыва',
-        on_delete=models.CASCADE,
-    )
     score = models.IntegerField(
         'Оценка',
-        validators=[MaxValueValidator(10), MinValueValidator(1)]
-    )
-    pub_date = models.DateTimeField(
-        'Дата публикации отзыва',
-        auto_now_add=True
+        validators=[MaxValueValidator(MAX_VALUE), MinValueValidator(MIN_VALUE)]
     )
     title = models.ForeignKey(
         'Title',
@@ -147,19 +143,8 @@ class Review(models.Model):
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
         default_related_name = 'reviews'
+        unique_together = [['author', 'title']]
 
     def __str__(self):
         """Возвращает строковое представление объекта отзыва."""
         return f'Отзыв {self.author} на "{self.title}"'
-
-    def save(self, *args, **kwargs):
-        """Переопределение метода save для проверки уникальности отзыва."""
-        if self.pk is None:
-            if Review.objects.filter(
-                    author=self.author,
-                    title=self.title
-            ).exists():
-                raise IntegrityError(
-                    'Отзыв на это произведение уже оставлен!'
-                )
-        super().save(*args, **kwargs)

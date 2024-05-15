@@ -1,4 +1,6 @@
-"""Модуль, определяющий административные классы и ресурсы админ-панели.
+"""
+Модуль, определяющий административные классы и ресурсы
+для административной панели Django.
 
 Этот модуль содержит административные классы, используемые для отображения
 и управления моделями Django в административной панели Django.
@@ -24,6 +26,7 @@ class CategoryResource(resources.ModelResource):
         model = Category
 
 
+@admin.register(Category)
 class CategoryAdmin(ImportExportModelAdmin):
     """Административный класс для модели Category."""
 
@@ -41,6 +44,7 @@ class GenreResource(resources.ModelResource):
         model = Genre
 
 
+@admin.register(Genre)
 class GenreAdmin(ImportExportModelAdmin):
     """Административный класс для модели Genre."""
 
@@ -58,6 +62,7 @@ class TitleResource(resources.ModelResource):
         model = Title
 
 
+@admin.register(Title)
 class TitleAdmin(ImportExportModelAdmin):
     """Административный класс для модели Title."""
 
@@ -84,6 +89,7 @@ class ReviewResource(resources.ModelResource):
         model = Review
 
 
+@admin.register(Review)
 class ReviewAdmin(ImportExportModelAdmin):
     """Административный класс для модели Review."""
 
@@ -111,15 +117,9 @@ class CommentResource(resources.ModelResource):
         model = Comment
 
 
+@admin.register(Comment)
 class CommentAdmin(ImportExportModelAdmin):
     """Административный класс для модели Comment."""
 
     resource_classes = [CommentResource]
     list_display = ('author', 'pub_date', 'review',)
-
-
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Genre, GenreAdmin)
-admin.site.register(Title, TitleAdmin)
-admin.site.register(Review, ReviewAdmin)
-admin.site.register(Comment, CommentAdmin)
