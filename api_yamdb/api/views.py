@@ -10,6 +10,7 @@ import random
 
 from django.core.mail import send_mail
 from django.conf import settings
+from django.db import IntegrityError
 from django.db.models import Q
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
@@ -287,48 +288,46 @@ class SignUpView(APIView):
         email = request.data.get('email')
         username = request.data.get('username')
 
-        user = User.objects.filter(
-            Q(email=email) | Q(username=username)
-        ).first()
-        if user:
-            if user.email == email:
-                if user.username != username:
-                    return Response(
-                        {'error': 'Email уже зарегистрирован!'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-                return Response(
-                    SignUpSerializer(user).data,
-                    status=status.HTTP_200_OK
+        try:
+            user, created = User.objects.get_or_create(
+                username=username,
+                email=email
+            )
+            if created:
+                confirmation_code = ''.join(
+                    str(random.randint(0, 9)) for _ in range(4)
                 )
-            else:
+                user.confirmation_code = confirmation_code
+                user.save()
+
+            send_mail(
+                'Код подтверждения',
+                f'Ваш код подтверждения: {user.confirmation_code}',
+                settings.SENDER_EMAIL,
+                [email]
+            )
+            
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
+            )
+        except IntegrityError as error:
+            if 'email' in error.args[0]:
+                return Response(
+                    {'error': 'Email уже зарегистрирован!'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if 'username' in error.args[0]:
                 return Response(
                     {'error': 'Пользователь с таким именем уже '
                               'зарегистрирован!'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        else:
-            user = User.objects.create_user(
-                username=username,
-                email=email
-            )
-            confirmation_code = ''.join(
-                str(random.randint(0, 9)) for _ in range(4)
-            )
-            user.confirmation_code = confirmation_code
-            user.save()
-
-            send_mail(
-                'Код подтверждения',
-                f'Ваш код подтверждения: {confirmation_code}',
-                settings.SENDER_EMAIL,
-                [email]
-            )
-
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK
-            )
+            else:
+                return Response(
+                    {'error': 'Произошла ошибка: {error.args[0]}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
 
 class GetTokenView(TokenObtainPairView):
