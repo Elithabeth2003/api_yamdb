@@ -84,8 +84,6 @@ class Category(models.Model):
     slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, verbose_name='Слаг')
 
     class Meta:
-        """Класс Meta."""
-
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
         ordering = ['name']
@@ -103,8 +101,6 @@ class Genre(models.Model):
     slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, verbose_name='Слаг')
 
     class Meta:
-        """Класс Meta."""
-
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
         ordering = ['name']
@@ -142,8 +138,6 @@ class Title(models.Model):
     )
 
     class Meta:
-        """Класс Meta."""
-
         verbose_name = 'произведение'
         verbose_name_plural = 'произведения'
         ordering = ('name',)
@@ -174,8 +168,6 @@ class Comment(models.Model):
     )
 
     class Meta:
-        """Класс Meta."""
-
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
         default_related_name = 'comments'
@@ -209,8 +201,6 @@ class Review(models.Model):
     )
 
     class Meta:
-        """Класс Meta."""
-
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
         default_related_name = 'reviews'

@@ -18,7 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для модели Category."""
 
     class Meta:
-        """Класс Meta."""
+        
 
         model = Category
         fields = (
@@ -31,7 +31,7 @@ class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Genre."""
 
     class Meta:
-        """Класс Meta."""
+        
 
         model = Genre
         fields = (
@@ -48,7 +48,7 @@ class ReadTitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        """Класс Meta."""
+        
 
         fields = (
             'id',
@@ -73,7 +73,7 @@ class WriteTitleSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        """Класс Meta."""
+        
 
         fields = (
             'id',
@@ -101,7 +101,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        """Класс Meta."""
+        
 
         fields = (
             'id',
@@ -121,7 +121,7 @@ class WriteCommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        """Класс Meta."""
+        
 
         fields = (
             'id',
@@ -140,7 +140,7 @@ class ReadReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        """Класс Meta."""
+        
 
         fields = (
             'id',
@@ -161,7 +161,7 @@ class WriteReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        """Класс Meta."""
+        
 
         fields = (
             'id',
@@ -197,8 +197,6 @@ class AdminSerializer(serializers.ModelSerializer):
     """Сериализатор для административных операций с моделью User."""
 
     class Meta:
-        """Класс Meta."""
-
         model = User
         fields = (
             'username',
