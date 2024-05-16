@@ -11,7 +11,6 @@ import random
 from django.core.mail import send_mail
 from django.conf import settings
 from django.db import IntegrityError
-from django.db.models import Q
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -43,11 +42,13 @@ from api.serializers import (
     UserSerializer,
     AdminSerializer
 )
-from api.permissions import (AdminOrReadOnlyPermission,
-                             AdminModeratorAuthorPermission,
-                             IsAdminPermission)
+from api.permissions import (
+    AdminOrReadOnlyPermission,
+    AdminModeratorAuthorPermission,
+    IsAdminPermission
+)
 from reviews.models import Category, Genre, Title, Review, Comment, User
-from reviews.constants import ME
+from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, ME
 
 
 class CategoryViewSet(BaseViewSet):
@@ -295,7 +296,7 @@ class SignUpView(APIView):
             )
             if created:
                 confirmation_code = ''.join(
-                    str(random.randint(0, 9)) for _ in range(4)
+                    str(random.randint(0, 9)) for _ in range(MAX_LENGTH_CONFIRMATION_CODE)
                 )
                 user.confirmation_code = confirmation_code
                 user.save()

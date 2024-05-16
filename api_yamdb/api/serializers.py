@@ -8,9 +8,10 @@
 """
 from rest_framework import serializers
 
+from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, MAX_LENGTH_EMAIL_ADDRESS, MAX_LENGTH_USERNAME
 from reviews.models import Category, Genre, Title, Comment, Review
 from reviews.models import User
-from reviews.validators import validate_username
+from reviews.validators import validate_score, validate_username, validate_year
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -83,6 +84,12 @@ class WriteTitleSerializer(serializers.ModelSerializer):
             'category'
         )
         model = Title
+
+    def validate_year(self, value):
+        """
+        Проверка правильности введенного года.
+        """
+        return validate_year(value)        
 
 
 class ReadCommentSerializer(serializers.ModelSerializer):
@@ -179,6 +186,12 @@ class WriteReviewSerializer(serializers.ModelSerializer):
                 'Отзыв на это произведение уже оставлен!')
         return data
 
+    def validate_score(self, value):
+        """
+        Проверяет соответствие оценки заданным границам.
+        """
+        return validate_score(value)
+    
 
 class AdminSerializer(serializers.ModelSerializer):
     """Сериализатор для административных операций с моделью User."""
@@ -209,10 +222,10 @@ class UserSerializer(AdminSerializer):
     """Сериализатор для базовых операций с моделью User."""
 
     username = serializers.SlugField(
-        max_length=150,
+        max_length=MAX_LENGTH_USERNAME,
     )
     email = serializers.EmailField(
-        max_length=254,
+        max_length=MAX_LENGTH_EMAIL_ADDRESS,
     )
     role = serializers.ChoiceField(
         choices=User.ROLE_CHOICES,
@@ -224,11 +237,11 @@ class SignUpSerializer(serializers.Serializer):
     """Сериализатор для регистрации нового пользователя."""
 
     username = serializers.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_USERNAME,
         required=True
     )
     email = serializers.EmailField(
-        max_length=254
+        max_length=MAX_LENGTH_EMAIL_ADDRESS
     )
 
     def validate_username(self, value):
@@ -244,11 +257,11 @@ class GetTokenSerializer(serializers.Serializer):
     """Сериализатор для получения токена аутентификации пользователя."""
 
     username = serializers.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_USERNAME,
         required=True
     )
     confirmation_code = serializers.CharField(
-        max_length=255,
+        max_length=MAX_LENGTH_CONFIRMATION_CODE,
     )
 
     def validate_username(self, value):

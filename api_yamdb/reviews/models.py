@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.utils import IntegrityError
 
-from .constants import LENGTH_OF_NAME
+from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, MAX_LENGTH_EMAIL_ADDRESS, MAX_LENGTH_FIRST_NAME, MAX_LENGTH_FOR_STR, MAX_LENGTH_LAST_NAME, MAX_LENGTH_NAME, MAX_LENGTH_SLUG, MAX_LENGTH_USERNAME, MAX_VALUE_SCORE, MIN_VALUE_SCORE
 from .validators import validate_year, validate_username
 
 
@@ -24,23 +24,23 @@ class User(AbstractUser):
     username = models.CharField(
         verbose_name='Имя пользователя',
         unique=True,
-        max_length=150,
+        max_length=MAX_LENGTH_USERNAME,
         validators=[validate_username]
 
     )
     email = models.EmailField(
         verbose_name='Email address',
         unique=True,
-        max_length=254
+        max_length=MAX_LENGTH_EMAIL_ADDRESS
     )
     first_name = models.CharField(
         verbose_name='Имя',
-        max_length=150,
+        max_length=MAX_LENGTH_FIRST_NAME,
         blank=True
     )
     last_name = models.CharField(
         verbose_name='Фамилия',
-        max_length=150,
+        max_length=MAX_LENGTH_LAST_NAME,
         blank=True
     )
     bio = models.TextField(
@@ -50,11 +50,11 @@ class User(AbstractUser):
     role = models.CharField(
         verbose_name='Роль',
         default='user',
-        max_length=10,
+        max_length=max(map(lambda x:len(x[1]), ROLE_CHOICES)),
         choices=ROLE_CHOICES
     )
     confirmation_code = models.CharField(
-        max_length=4
+        max_length=MAX_LENGTH_CONFIRMATION_CODE
     )
 
     @property
@@ -74,14 +74,14 @@ class User(AbstractUser):
 
     def __str__(self):
         """Возвращает строковое представление объекта пользователя."""
-        return self.username[:LENGTH_OF_NAME]
+        return self.username[:MAX_LENGTH_FOR_STR]
 
 
 class Category(models.Model):
     """Модель для категорий произведений."""
 
-    name = models.CharField(max_length=256, verbose_name='Название')
-    slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
+    name = models.CharField(max_length=MAX_LENGTH_NAME, verbose_name='Название')
+    slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, verbose_name='Слаг')
 
     class Meta:
         """Класс Meta."""
@@ -93,14 +93,14 @@ class Category(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление объекта категории."""
-        return self.name[:LENGTH_OF_NAME]
+        return self.name[:MAX_LENGTH_FOR_STR]
 
 
 class Genre(models.Model):
     """Модель для жанров произведений."""
 
-    name = models.CharField(max_length=256, verbose_name='Название', )
-    slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
+    name = models.CharField(max_length=MAX_LENGTH_NAME, verbose_name='Название', )
+    slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, verbose_name='Слаг')
 
     class Meta:
         """Класс Meta."""
@@ -112,14 +112,14 @@ class Genre(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление объекта жанра."""
-        return self.name[:LENGTH_OF_NAME]
+        return self.name[:MAX_LENGTH_FOR_STR]
 
 
 class Title(models.Model):
     """Модель для произведений."""
 
     name = models.CharField(
-        max_length=256,
+        max_length=MAX_LENGTH_NAME,
         verbose_name='Название')
     year = models.IntegerField(
         verbose_name='Год',
@@ -151,7 +151,7 @@ class Title(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление объекта произведения."""
-        return self.name[:LENGTH_OF_NAME]
+        return self.name[:MAX_LENGTH_FOR_STR]
 
 
 class Comment(models.Model):
@@ -196,7 +196,7 @@ class Review(models.Model):
     )
     score = models.IntegerField(
         'Оценка',
-        validators=[MaxValueValidator(10), MinValueValidator(1)]
+        validators=[MaxValueValidator(MAX_VALUE_SCORE), MinValueValidator(MIN_VALUE_SCORE)]
     )
     pub_date = models.DateTimeField(
         'Дата публикации отзыва',

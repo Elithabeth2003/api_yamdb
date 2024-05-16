@@ -9,7 +9,7 @@ import re
 
 from django.core.exceptions import ValidationError
 
-from .constants import ME
+from api_yamdb.constants import MAX_VALUE_SCORE, MIN_VALUE_SCORE, ME
 
 
 def validate_year(value):
@@ -23,13 +23,12 @@ def validate_year(value):
         raise ValidationError("Дата введена неправильно, введите 4 цифры.")
     elif value > date.today().year:
         raise ValidationError("Год не может быть больше текущего.")
+    return value
 
 
 def validate_username(username):
     """
-    Проверка правильности введенного года.
-
-    Функция проверяет имя пользователя.
+    Проверка имени пользователя на соответствие шаблону.
     """
     if username == ME:
         raise ValidationError(
@@ -45,3 +44,17 @@ def validate_username(username):
             f'а именно содержит {non_matching_chars}'
         )
     return username
+
+
+def validate_score(score):
+    """
+    Проверка правильности введенного года.
+
+    Функция проверяет имя пользователя.
+    """
+    if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE+1):
+        raise ValidationError(
+            'Оценка произведения должны быть в пределах '
+            f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
+        )
+    return score
