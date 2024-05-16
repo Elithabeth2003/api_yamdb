@@ -6,9 +6,23 @@
 Каждый класс View предоставляет функциональность для выполнения операций CRUD
 (Create, Retrieve, Update, Delete) с соответствующей моделью.
 """
+import random
+
+from django.core.mail import send_mail
+from django.conf import settings
+from django.db.models import Q
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.filters import SearchFilter
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
 
@@ -22,11 +36,17 @@ from api.serializers import (
     ReadCommentSerializer,
     WriteCommentSerializer,
     ReadReviewSerializer,
-    WriteReviewSerializer
+    WriteReviewSerializer,
+    SignUpSerializer,
+    GetTokenSerializer,
+    UserSerializer,
+    AdminSerializer
 )
 from api.permissions import (AdminOrReadOnlyPermission,
-                             AdminModeratorAuthorPermission)
-from reviews.models import Category, Genre, Title, Review, Comment
+                             AdminModeratorAuthorPermission,
+                             IsAdminPermission)
+from reviews.models import Category, Genre, Title, Review, Comment, User
+from reviews.constants import ME
 
 
 class CategoryViewSet(BaseViewSet):
@@ -214,4 +234,128 @@ class ReviewViewSet(ModelViewSet):
         serializer.save(
             author=self.request.user,
             title=self.__get_title()
+        )
+
+
+class UserViewSet(ModelViewSet):
+    """Представление для операций с пользователями."""
+
+    queryset = User.objects.all()
+    serializer_class = AdminSerializer
+    permission_classes = (IsAdminPermission,)
+    filter_backends = (SearchFilter,)
+    lookup_field = 'username'
+    search_fields = ('username',)
+    http_method_names = ['get', 'post', 'head', 'patch', 'delete']
+
+    @action(
+        detail=False, methods=['GET', 'PATCH'],
+        url_path=f'{ME}', url_name=f'{ME}',
+        permission_classes=(IsAuthenticated,)
+    )
+    def profile(self, request):
+        """Представление профиля текущего пользователя."""
+        if not request.method == 'PATCH':
+            serializer = UserSerializer(
+                request.user
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = UserSerializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class SignUpView(APIView):
+    """Представление для регистрации новых пользователей."""
+
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        """
+        Создает нового пользователя.
+
+        Создает нового пользователя на основе введенных данных.
+        Если пользователь уже существует, возвращает ошибку.
+        Если email уже зарегистрирован, но с другим именем пользователя,
+        возвращает данные этого пользователя.
+        """
+        serializer = SignUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = request.data.get('email')
+        username = request.data.get('username')
+
+        user = User.objects.filter(
+            Q(email=email) | Q(username=username)
+        ).first()
+        if user:
+            if user.email == email:
+                if user.username != username:
+                    return Response(
+                        {'error': 'Email уже зарегистрирован!'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                return Response(
+                    SignUpSerializer(user).data,
+                    status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {'error': 'Пользователь с таким именем уже '
+                              'зарегистрирован!'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        else:
+            user = User.objects.create_user(
+                username=username,
+                email=email
+            )
+            confirmation_code = ''.join(
+                str(random.randint(0, 9)) for _ in range(4)
+            )
+            user.confirmation_code = confirmation_code
+            user.save()
+
+            send_mail(
+                'Код подтверждения',
+                f'Ваш код подтверждения: {confirmation_code}',
+                settings.SENDER_EMAIL,
+                [email]
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
+            )
+
+
+class GetTokenView(TokenObtainPairView):
+    """Представление для получения токена аутентификации пользователя."""
+
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Аутентифицирует пользователя и выдает токен аутентификации.
+
+        Аутентифицирует пользователя по имени пользователя и
+        коду подтверждения. Если аутентификация прошла успешно,
+        выдает токен аутентификации.
+        """
+        serializer = GetTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = get_object_or_404(
+            User, username=request.data.get('username')
+        )
+        if user.confirmation_code != request.data['confirmation_code']:
+            raise ValidationError(
+                'Неверный код подтверждения!',
+            )
+        token = {'token': str(AccessToken.for_user(user))}
+        return Response(
+            token,
+            status=status.HTTP_200_OK
         )

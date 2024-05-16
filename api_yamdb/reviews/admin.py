@@ -12,7 +12,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 from import_export.widgets import DateTimeWidget, ForeignKeyWidget
 
-from .models import Category, Comment, Genre, Title, Review
+from .models import Category, Comment, Genre, Title, Review, User
 
 
 class CategoryResource(resources.ModelResource):
@@ -118,6 +118,22 @@ class CommentAdmin(ImportExportModelAdmin):
     list_display = ('author', 'pub_date', 'review',)
 
 
+class UserResource(resources.ModelResource):
+    """Ресурс для экспорта и импорта данных модели User."""
+
+    class Meta:
+        """Класс Meta."""
+
+        model = User
+
+
+class UserAdmin(ImportExportModelAdmin):
+    """Административный класс для модели User."""
+
+    resource_classes = [UserResource]
+
+
+admin.site.register(User, UserAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Genre, GenreAdmin)
 admin.site.register(Title, TitleAdmin)

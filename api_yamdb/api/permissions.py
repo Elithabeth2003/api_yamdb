@@ -44,3 +44,18 @@ class AdminModeratorAuthorPermission(BasePermission):
                 or request.user.is_moderator
                 or request.user.is_admin
                 )
+
+
+class IsAdminPermission(BasePermission):
+    """UsersPermission.
+
+    Проверяет, имеет ли пользователь
+    право на доступ к конечной точке API.
+    """
+
+    def has_permission(self, request, view):
+        """Определяет права доступа на уровне всего запроса."""
+        return (
+            request.user.is_authenticated
+            and request.user.is_admin
+        )

@@ -9,6 +9,8 @@
 from rest_framework import serializers
 
 from reviews.models import Category, Genre, Title, Comment, Review
+from reviews.models import User
+from reviews.validators import validate_username
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -176,3 +178,83 @@ class WriteReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Отзыв на это произведение уже оставлен!')
         return data
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    """Сериализатор для административных операций с моделью User."""
+
+    class Meta:
+        """Класс Meta."""
+
+        model = User
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role',
+        )
+
+    def validate_username(self, value):
+        """
+        Проверяет правильность формата имени пользователя.
+
+        Проверяет, соответствует ли имя пользователя заданному формату.
+        """
+        return validate_username(value)
+
+
+class UserSerializer(AdminSerializer):
+    """Сериализатор для базовых операций с моделью User."""
+
+    username = serializers.SlugField(
+        max_length=150,
+    )
+    email = serializers.EmailField(
+        max_length=254,
+    )
+    role = serializers.ChoiceField(
+        choices=User.ROLE_CHOICES,
+        read_only=True
+    )
+
+
+class SignUpSerializer(serializers.Serializer):
+    """Сериализатор для регистрации нового пользователя."""
+
+    username = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+    email = serializers.EmailField(
+        max_length=254
+    )
+
+    def validate_username(self, value):
+        """
+        Проверяет правильность формата имени пользователя.
+
+        Проверяет, соответствует ли имя пользователя заданному формату.
+        """
+        return validate_username(value)
+
+
+class GetTokenSerializer(serializers.Serializer):
+    """Сериализатор для получения токена аутентификации пользователя."""
+
+    username = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+    confirmation_code = serializers.CharField(
+        max_length=255,
+    )
+
+    def validate_username(self, value):
+        """
+        Проверяет правильность формата имени пользователя.
+
+        Проверяет, соответствует ли имя пользователя заданному формату.
+        """
+        return validate_username(value)
