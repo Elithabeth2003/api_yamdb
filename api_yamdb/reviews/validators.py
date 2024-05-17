@@ -46,11 +46,7 @@ def validate_username(username):
 
 
 def validate_score(score):
-    """
-    Проверка правильности введенного года.
-
-    Функция проверяет имя пользователя.
-    """
+    """Проверка соответствия оценки отзыва заданным границам."""
     if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
         raise ValidationError(
             'Оценка произведения должны быть в пределах '
