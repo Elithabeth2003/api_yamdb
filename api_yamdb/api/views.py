@@ -26,17 +26,15 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
 
-from api.viewsets import BaseViewSet
+from api.viewsets import ListCreateDestroyViewSet
 from api.filters import TitleFilter
 from api.serializers import (
     CategorySerializer,
     GenreSerializer,
     ReadTitleSerializer,
     WriteTitleSerializer,
-    ReadCommentSerializer,
-    WriteCommentSerializer,
-    ReadReviewSerializer,
-    WriteReviewSerializer,
+    CommentSerializer,
+    ReviewSerializer,
     SignUpSerializer,
     GetTokenSerializer,
     UserSerializer,
@@ -51,7 +49,7 @@ from reviews.models import Category, Genre, Title, Review, Comment, User
 from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, ME
 
 
-class CategoryViewSet(BaseViewSet):
+class CategoryViewSet(ListCreateDestroyViewSet):
     """
     View для обработки запросов к модели Category.
 
@@ -62,7 +60,7 @@ class CategoryViewSet(BaseViewSet):
     serializer_class = CategorySerializer
 
 
-class GenreViewSet(BaseViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     """
     View для обработки запросов к модели Genre.
 
@@ -81,25 +79,13 @@ class TitleViewSet(ModelViewSet):
     Поддерживает фильтрацию, пагинацию и аннотации среднего рейтинга.
     """
 
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        rating=Avg('reviews__score')
+    ).order_by(*Title._meta.ordering)
     permission_classes = (AdminOrReadOnlyPermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
     http_method_names = ('get', 'post', 'patch', 'delete')
-
-    def get_queryset(self):
-        """
-        Получение набора запросов для обработки.
-
-        Возвращает набор запросов для обработки запросов к модели Title.
-        Дополнительно аннотирует каждый объект рейтингом,
-        вычисленным как среднее значение оценок из всех отзывов.
-        """
-        queryset = super().get_queryset()
-        queryset = queryset.annotate(
-            rating=Avg('reviews__score')
-        )
-        return queryset
 
     def get_serializer_class(self):
         """
@@ -110,29 +96,6 @@ class TitleViewSet(ModelViewSet):
         if self.request.method in SAFE_METHODS:
             return ReadTitleSerializer
         return WriteTitleSerializer
-
-    def perform_create(self, serializer):
-        """
-        Выполнение создания произведения.
-
-        Сохраняет произведение, категорию и жанры из параметров запроса.
-        """
-        serializer.save(
-            category=get_object_or_404(
-                Category, slug=self.request.data.get('category')
-            ),
-            genre=Genre.objects.filter(
-                slug__in=self.request.data.getlist('genre')
-            )
-        )
-
-    def perform_update(self, serializer):
-        """
-        Выполнение обновления произведения.
-
-        Повторяет действия perform_create для обновления произведения.
-        """
-        self.perform_create(serializer)
 
 
 class CommentViewSet(ModelViewSet):
@@ -145,6 +108,7 @@ class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = (AdminModeratorAuthorPermission,)
     http_method_names = ('get', 'post', 'patch', 'delete')
+    serializer_class = CommentSerializer
 
     def __get_review(self):
         """
@@ -153,7 +117,7 @@ class CommentViewSet(ModelViewSet):
         Возвращает экземпляр модели Review по его идентификатору
         из параметров запроса.
         """
-        return get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        return get_object_or_404(Review, pk=self.kwargs['review_id'])
 
     def get_queryset(self):
         """
@@ -162,17 +126,7 @@ class CommentViewSet(ModelViewSet):
         Возвращает набор запросов для обработки запросов к модели Comment.
         Фильтрует комментарии по отзыву, полученному из параметров запроса.
         """
-        return Comment.objects.filter(review=self.__get_review())
-
-    def get_serializer_class(self):
-        """
-        Получение класса сериализатора.
-
-        Возвращает класс сериализатора в зависимости от метода запроса.
-        """
-        if self.request.method in SAFE_METHODS:
-            return ReadCommentSerializer
-        return WriteCommentSerializer
+        return self.__get_review().comments.all()
 
     def perform_create(self, serializer):
         """
@@ -197,6 +151,7 @@ class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     permission_classes = (AdminModeratorAuthorPermission,)
     http_method_names = ('get', 'post', 'patch', 'delete')
+    serializer_class = ReviewSerializer
 
     def __get_title(self):
         """
@@ -205,7 +160,7 @@ class ReviewViewSet(ModelViewSet):
         Возвращает экземпляр модели Title по его идентификатору
         из параметров запроса.
         """
-        return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        return get_object_or_404(Title, pk=self.kwargs['title_id'])
 
     def get_queryset(self):
         """
@@ -214,17 +169,7 @@ class ReviewViewSet(ModelViewSet):
         Возвращает набор запросов для обработки запросов к модели Review.
         Фильтрует отзывы по произведению, полученному из параметров запроса.
         """
-        return Review.objects.filter(title=self.__get_title())
-
-    def get_serializer_class(self):
-        """
-        Получение класса сериализатора.
-
-        Возвращает класс сериализатора в зависимости от метода запроса.
-        """
-        if self.request.method in SAFE_METHODS:
-            return ReadReviewSerializer
-        return WriteReviewSerializer
+        return self.__get_title().reviews.all()
 
     def perform_create(self, serializer):
         """

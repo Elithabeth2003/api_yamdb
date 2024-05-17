@@ -5,7 +5,7 @@ from rest_framework.filters import SearchFilter
 from .permissions import AdminOrReadOnlyPermission
 
 
-class BaseViewSet(
+class ListCreateDestroyViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
