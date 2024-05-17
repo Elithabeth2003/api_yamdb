@@ -4,7 +4,18 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.utils import IntegrityError
 
-from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, MAX_LENGTH_EMAIL_ADDRESS, MAX_LENGTH_FIRST_NAME, MAX_LENGTH_FOR_STR, MAX_LENGTH_LAST_NAME, MAX_LENGTH_NAME, MAX_LENGTH_SLUG, MAX_LENGTH_USERNAME, MAX_VALUE_SCORE, MIN_VALUE_SCORE
+from api_yamdb.constants import (
+    MAX_LENGTH_CONFIRMATION_CODE,
+    MAX_LENGTH_EMAIL_ADDRESS,
+    MAX_LENGTH_FIRST_NAME,
+    MAX_LENGTH_FOR_STR,
+    MAX_LENGTH_LAST_NAME,
+    MAX_LENGTH_NAME,
+    MAX_LENGTH_SLUG,
+    MAX_LENGTH_USERNAME,
+    MAX_VALUE_SCORE,
+    MIN_VALUE_SCORE
+)
 from .validators import validate_year, validate_username
 
 
@@ -50,7 +61,7 @@ class User(AbstractUser):
     role = models.CharField(
         verbose_name='Роль',
         default='user',
-        max_length=max(map(lambda x:len(x[1]), ROLE_CHOICES)),
+        max_length=max(map(lambda x: len(x[1]), ROLE_CHOICES)),
         choices=ROLE_CHOICES
     )
     confirmation_code = models.CharField(
@@ -80,8 +91,15 @@ class User(AbstractUser):
 class Category(models.Model):
     """Модель для категорий произведений."""
 
-    name = models.CharField(max_length=MAX_LENGTH_NAME, verbose_name='Название')
-    slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, verbose_name='Слаг')
+    name = models.CharField(
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Название'
+    )
+    slug = models.SlugField(
+        max_length=MAX_LENGTH_SLUG,
+        unique=True,
+        verbose_name='Слаг'
+    )
 
     class Meta:
         verbose_name = 'категория'
@@ -97,8 +115,15 @@ class Category(models.Model):
 class Genre(models.Model):
     """Модель для жанров произведений."""
 
-    name = models.CharField(max_length=MAX_LENGTH_NAME, verbose_name='Название', )
-    slug = models.SlugField(max_length=MAX_LENGTH_SLUG, unique=True, verbose_name='Слаг')
+    name = models.CharField(
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Название',
+    )
+    slug = models.SlugField(
+        max_length=MAX_LENGTH_SLUG,
+        unique=True,
+        verbose_name='Слаг'
+    )
 
     class Meta:
         verbose_name = 'жанр'
@@ -188,7 +213,8 @@ class Review(models.Model):
     )
     score = models.IntegerField(
         'Оценка',
-        validators=[MaxValueValidator(MAX_VALUE_SCORE), MinValueValidator(MIN_VALUE_SCORE)]
+        validators=[MaxValueValidator(MAX_VALUE_SCORE),
+                    MinValueValidator(MIN_VALUE_SCORE)]
     )
     pub_date = models.DateTimeField(
         'Дата публикации отзыва',
@@ -220,4 +246,3 @@ class Review(models.Model):
                     'Отзыв на это произведение уже оставлен!'
                 )
         super().save(*args, **kwargs)
-

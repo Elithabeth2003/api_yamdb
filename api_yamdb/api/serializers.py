@@ -8,7 +8,8 @@
 """
 from rest_framework import serializers
 
-from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, MAX_LENGTH_EMAIL_ADDRESS, MAX_LENGTH_USERNAME
+from api_yamdb.constants import (MAX_LENGTH_CONFIRMATION_CODE,
+                                 MAX_LENGTH_EMAIL_ADDRESS, MAX_LENGTH_USERNAME)
 from reviews.models import Category, Genre, Title, Comment, Review
 from reviews.models import User
 from reviews.validators import validate_score, validate_username, validate_year
@@ -18,8 +19,6 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для модели Category."""
 
     class Meta:
-        
-
         model = Category
         fields = (
             'name',
@@ -31,8 +30,6 @@ class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Genre."""
 
     class Meta:
-        
-
         model = Genre
         fields = (
             'name',
@@ -43,13 +40,11 @@ class GenreSerializer(serializers.ModelSerializer):
 class ReadTitleSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения информации о произведении (Title)."""
 
-    genre = GenreSerializer(many=True,)
+    genre = GenreSerializer(many=True, )
     category = CategorySerializer()
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        
-
         fields = (
             'id',
             'name',
@@ -73,8 +68,6 @@ class WriteTitleSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        
-
         fields = (
             'id',
             'name',
@@ -86,10 +79,8 @@ class WriteTitleSerializer(serializers.ModelSerializer):
         model = Title
 
     def validate_year(self, value):
-        """
-        Проверка правильности введенного года.
-        """
-        return validate_year(value)        
+        """Проверка правильности введенного года."""
+        return validate_year(value)
 
 
 class ReadCommentSerializer(serializers.ModelSerializer):
@@ -101,8 +92,6 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        
-
         fields = (
             'id',
             'text',
@@ -121,8 +110,6 @@ class WriteCommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        
-
         fields = (
             'id',
             'text',
@@ -140,8 +127,6 @@ class ReadReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        
-
         fields = (
             'id',
             'text',
@@ -161,8 +146,6 @@ class WriteReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        
-
         fields = (
             'id',
             'text',
@@ -180,21 +163,19 @@ class WriteReviewSerializer(serializers.ModelSerializer):
         """
         title_id = self.context.get('view').kwargs.get('title_id')
         if self.context['request'].method == 'POST' and Review.objects.filter(
-            title=title_id, author=self.context['request'].user
+                title=title_id, author=self.context['request'].user
         ).exists():
             raise serializers.ValidationError(
                 'Отзыв на это произведение уже оставлен!')
         return data
 
     def validate_score(self, value):
-        """
-        Проверяет соответствие оценки заданным границам.
-        """
+        """Проверяет соответствие оценки заданным границам."""
         return validate_score(value)
-    
 
-class AdminSerializer(serializers.ModelSerializer):
-    """Сериализатор для административных операций с моделью User."""
+
+class BaseAdminUserSerializer(serializers.ModelSerializer):
+    """Базовый сериализатор для операций с моделью User."""
 
     class Meta:
         model = User
@@ -216,7 +197,13 @@ class AdminSerializer(serializers.ModelSerializer):
         return validate_username(value)
 
 
-class UserSerializer(AdminSerializer):
+class AdminSerializer(BaseAdminUserSerializer):
+    """Сериализатор для административных операций с моделью User."""
+
+    pass
+
+
+class UserSerializer(BaseAdminUserSerializer):
     """Сериализатор для базовых операций с моделью User."""
 
     username = serializers.SlugField(
@@ -239,7 +226,8 @@ class SignUpSerializer(serializers.Serializer):
         required=True
     )
     email = serializers.EmailField(
-        max_length=MAX_LENGTH_EMAIL_ADDRESS
+        max_length=MAX_LENGTH_EMAIL_ADDRESS,
+        required=True
     )
 
     def validate_username(self, value):
@@ -260,6 +248,7 @@ class GetTokenSerializer(serializers.Serializer):
     )
     confirmation_code = serializers.CharField(
         max_length=MAX_LENGTH_CONFIRMATION_CODE,
+        required=True
     )
 
     def validate_username(self, value):

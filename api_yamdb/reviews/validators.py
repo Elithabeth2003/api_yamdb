@@ -27,9 +27,7 @@ def validate_year(value):
 
 
 def validate_username(username):
-    """
-    Проверка имени пользователя на соответствие шаблону.
-    """
+    """Проверка имени пользователя на соответствие шаблону."""
     if username == ME:
         raise ValidationError(
             f'Использовать имя {ME} в качестве username запрещено!'
@@ -52,7 +50,7 @@ def validate_score(score):
 
     Функция проверяет имя пользователя.
     """
-    if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE+1):
+    if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
         raise ValidationError(
             'Оценка произведения должны быть в пределах '
             f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'

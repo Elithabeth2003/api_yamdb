@@ -296,7 +296,9 @@ class SignUpView(APIView):
             )
             if created:
                 confirmation_code = ''.join(
-                    str(random.randint(0, 9)) for _ in range(MAX_LENGTH_CONFIRMATION_CODE)
+                    str(random.randint(0, 9)) for _ in range(
+                        MAX_LENGTH_CONFIRMATION_CODE
+                    )
                 )
                 user.confirmation_code = confirmation_code
                 user.save()
@@ -307,7 +309,6 @@ class SignUpView(APIView):
                 settings.SENDER_EMAIL,
                 [email]
             )
-            
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
