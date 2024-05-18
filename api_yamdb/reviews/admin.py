@@ -1,6 +1,4 @@
-"""
-Модуль, определяющий административные классы и ресурсы
-для административной панели Django.
+"""Модуль, определяющий административные классы и ресурсы админ-панели.
 
 Этот модуль содержит административные классы, используемые для отображения
 и управления моделями Django в административной панели Django.
@@ -14,15 +12,13 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 from import_export.widgets import DateTimeWidget, ForeignKeyWidget
 
-from .models import Category, Comment, Genre, Title, Review
+from .models import Category, Comment, Genre, Title, Review, User
 
 
 class CategoryResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Category."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Category
 
 
@@ -39,8 +35,6 @@ class GenreResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Genre."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Genre
 
 
@@ -57,8 +51,6 @@ class TitleResource(resources.ModelResource):
     """Ресурс для экспорта и импорта данных модели Title."""
 
     class Meta:
-        """Класс Meta."""
-
         model = Title
 
 
@@ -84,8 +76,6 @@ class ReviewResource(resources.ModelResource):
     )
 
     class Meta:
-        """Класс Meta."""
-
         model = Review
 
 
@@ -112,8 +102,6 @@ class CommentResource(resources.ModelResource):
     )
 
     class Meta:
-        """Класс Meta."""
-
         model = Comment
 
 
@@ -123,3 +111,17 @@ class CommentAdmin(ImportExportModelAdmin):
 
     resource_classes = [CommentResource]
     list_display = ('author', 'pub_date', 'review',)
+
+
+class UserResource(resources.ModelResource):
+    """Ресурс для экспорта и импорта данных модели User."""
+
+    class Meta:
+        model = User
+
+
+@admin.register(User)
+class UserAdmin(ImportExportModelAdmin):
+    """Административный класс для модели User."""
+
+    resource_classes = [UserResource]

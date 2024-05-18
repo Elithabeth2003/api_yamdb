@@ -1,6 +1,7 @@
 """
-Модуль management команды для импорта данных
-из CSV файлов в базу данных SQLite.
+Модуль management команды для импорта данных.
+
+Импортирует из CSV файлов в базу данных SQLite.
 """
 import csv
 import sqlite3
@@ -9,7 +10,6 @@ from django.core.management.base import BaseCommand
 
 from api_yamdb.api_yamdb.settings import BASE_DIR
 
-print(BASE_DIR)
 
 base = 'api_yamdb/static/data/'
 files = ('category.csv', 'genre.csv', 'titles.csv',
@@ -43,7 +43,7 @@ class Command(BaseCommand):
         for file, table in zip(files, tables):
             try:
                 print('start download', file)
-                import_csv_to_sqlite(base + file, table)
+                import_csv_to_sqlite(BASE_DIR + file, table)
                 print('finish download', file)
             except Exception as e:
                 print(e)

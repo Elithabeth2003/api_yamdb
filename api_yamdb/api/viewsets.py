@@ -11,8 +11,7 @@ class ListCreateDestroyViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
-    """
-    Базовый класс для представлений с поддержкой необходимых операций
+    """Базовый класс для представлений с поддержкой необходимых операций.
 
     Включает в себя функциональность списочного представления (ListModelMixin),
     представления создания объекта (CreateModelMixin)
