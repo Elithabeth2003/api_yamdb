@@ -6,8 +6,6 @@
 в рамках API Django REST Framework.
 
 """
-from datetime import date
-
 from rest_framework import serializers
 
 from api_yamdb.constants import (
