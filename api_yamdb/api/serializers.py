@@ -93,7 +93,6 @@ class CommentSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
-    pub_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
         fields = (
@@ -112,7 +111,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
-    pub_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
         fields = (
