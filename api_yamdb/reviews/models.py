@@ -13,7 +13,10 @@ from api_yamdb.constants import (
     MAX_LENGTH_SLUG,
     MAX_LENGTH_USERNAME,
     MAX_VALUE_SCORE,
-    MIN_VALUE_SCORE
+    MIN_VALUE_SCORE,
+    USER,
+    MODERATOR,
+    ADMIN
 )
 from .validators import validate_year, validate_username
 
@@ -21,14 +24,10 @@ from .validators import validate_year, validate_username
 class User(AbstractUser):
     """Модель пользователя приложения."""
 
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-
     ROLE_CHOICES = [
-        (USER, 'user'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin'),
+        (USER, USER),
+        (MODERATOR, MODERATOR),
+        (ADMIN, ADMIN),
     ]
 
     username = models.CharField(
@@ -70,17 +69,17 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         """Проверяет, является ли пользователь администратором."""
-        return self.role == self.ADMIN or self.is_superuser or self.is_staff
+        return self.role == ADMIN or self.is_superuser or self.is_staff
 
     @property
     def is_moderator(self):
         """Проверяет, является ли пользователь модератором."""
-        return self.role == self.MODERATOR
+        return self.role == MODERATOR
 
     @property
     def is_user(self):
         """Проверяет, является ли пользователь обычным пользователем."""
-        return self.role == self.USER
+        return self.role == USER
 
     def __str__(self):
         """Возвращает строковое представление объекта пользователя."""
