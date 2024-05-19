@@ -2,20 +2,6 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
-class AdminOrReadOnlyPermission(BasePermission):
-    """AdminOrReadOnlyPermission.
-
-    Разрешение для доступа к конечным точкам API
-    только для администраторов или в режиме "только чтение".
-    """
-
-    def has_permission(self, request, view):
-        """Определяет права доступа на уровне всего запроса."""
-        return (request.user.is_authenticated and request.user.is_admin
-                or request.method in SAFE_METHODS
-                )
-
-
 class AdminModeratorAuthorPermission(BasePermission):
     """AdminModeratorAuthorPermission.
 
@@ -54,3 +40,17 @@ class IsAdminPermission(BasePermission):
             request.user.is_authenticated
             and request.user.is_admin
         )
+
+
+class AdminOrReadOnlyPermission(IsAdminPermission):
+    """AdminOrReadOnlyPermission.
+
+    Разрешение для доступа к конечным точкам API
+    только для администраторов или в режиме "только чтение".
+    """
+
+    def has_permission(self, request, view):
+        """Определяет права доступа на уровне всего запроса."""
+        return (super().has_permission(request, view)
+                or request.method in SAFE_METHODS
+                )
