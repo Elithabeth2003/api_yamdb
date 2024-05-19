@@ -16,7 +16,7 @@ from api_yamdb.constants import (
     MAX_LENGTH_USERNAME
 )
 from reviews.models import Category, Genre, Title, Comment, Review, User
-from reviews.validators import validate_username
+from reviews.validators import validate_username, validate_year, validate_score
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -85,12 +85,7 @@ class WriteTitleSerializer(serializers.ModelSerializer):
 
     def validate_year(self, value):
         """Проверяет, что год не превышает текущий год."""
-        if value > date.today().year:
-            raise serializers.ValidationError(
-                f"""Введенный год ({value})
-                не может быть больше текущего ({date.today().year})."""
-            )
-        return value
+        return validate_year(value)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -133,9 +128,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate_score(self, value):
         """Валидация оценки."""
-        if value < 1 or value > 10:
-            raise serializers.ValidationError('Оценка должна быть от 1 до 10.')
-        return value
+        return validate_score(value)
 
     def validate(self, data):
         """
