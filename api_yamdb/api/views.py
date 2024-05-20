@@ -6,10 +6,6 @@
 Каждый класс View предоставляет функциональность для выполнения операций CRUD
 (Create, Retrieve, Update, Delete) с соответствующей моделью.
 """
-import random
-
-from django.core.mail import send_mail
-from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
@@ -46,7 +42,7 @@ from api.permissions import (
     IsAdminPermission
 )
 from reviews.models import Category, Genre, Title, Review, Comment, User
-from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, ME
+from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, ME, VALID_CHARS_FOR_CONFIRMATION_CODE
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):
@@ -197,16 +193,13 @@ class UserViewSet(ModelViewSet):
 
     @action(
         detail=False, methods=['GET', 'PATCH'],
-        url_path=f'{ME}', url_name=f'{ME}',
+        url_path=ME, url_name=ME,
         permission_classes=(IsAuthenticated,)
     )
     def profile(self, request):
         """Представление профиля текущего пользователя."""
         if not request.method == 'PATCH':
-            serializer = UserSerializer(
-                request.user
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
         serializer = UserSerializer(
             request.user, data=request.data, partial=True
         )
@@ -235,46 +228,25 @@ class SignUpView(APIView):
         username = request.data.get('username')
 
         try:
-            user, created = User.objects.get_or_create(
+            user, _ = User.objects.get_or_create(
                 username=username,
                 email=email
             )
-            if created:
-                confirmation_code = ''.join(
-                    str(random.randint(0, 9)) for _ in range(
-                        MAX_LENGTH_CONFIRMATION_CODE
-                    )
-                )
-                user.confirmation_code = confirmation_code
-                user.save()
-
-            send_mail(
-                'Код подтверждения',
-                f'Ваш код подтверждения: {user.confirmation_code}',
-                settings.SENDER_EMAIL,
-                [email]
-            )
+            user.create_confirmation_code()
+            user.send_confirmation_code()
+            
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
             )
-        except IntegrityError as error:
-            if 'email' in error.args[0]:
-                return Response(
-                    {'error': 'Email уже зарегистрирован!'},
-                    status=status.HTTP_400_BAD_REQUEST
+        except IntegrityError:
+            if User.objects.filter(username=username).exists():
+                raise ValidationError( 
+                    f'{username} уже зарегистрирован!' 
                 )
-            if 'username' in error.args[0]:
-                return Response(
-                    {'error': 'Пользователь с таким именем уже '
-                              'зарегистрирован!'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            else:
-                return Response(
-                    {'error': 'Произошла ошибка: {error.args[0]}'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            raise ValidationError( 
+                    f'{email} уже зарегистрирован!' 
+                )            
 
 
 class GetTokenView(TokenObtainPairView):
@@ -297,8 +269,10 @@ class GetTokenView(TokenObtainPairView):
             User, username=request.data.get('username')
         )
         if user.confirmation_code != request.data['confirmation_code']:
+            user.create_confirmation_code()
+            user.send_confirmation_code()
             raise ValidationError(
-                'Неверный код подтверждения!',
+                'Неверный код подтверждения. Новый код выслан на почту.',
             )
         token = {'token': str(AccessToken.for_user(user))}
         return Response(

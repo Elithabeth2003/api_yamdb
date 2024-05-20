@@ -2,126 +2,56 @@
 
 Этот модуль содержит административные классы, используемые для отображения
 и управления моделями Django в административной панели Django.
-Каждый административный класс связан с соответствующим ресурсом,
-который используется для экспорта и импорта данных с использованием
-пакета import-export.
 """
 from django.contrib import admin
-from import_export import resources
-from import_export.admin import ImportExportModelAdmin
-from import_export.fields import Field
-from import_export.widgets import DateTimeWidget, ForeignKeyWidget
 
 from .models import Category, Comment, Genre, Title, Review, User
 
 
-class CategoryResource(resources.ModelResource):
-    """Ресурс для экспорта и импорта данных модели Category."""
-
-    class Meta:
-        model = Category
-
-
 @admin.register(Category)
-class CategoryAdmin(ImportExportModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     """Административный класс для модели Category."""
 
-    resource_classes = [CategoryResource]
     list_display = ('name', 'slug')
     search_fields = ('name',)
-
-
-class GenreResource(resources.ModelResource):
-    """Ресурс для экспорта и импорта данных модели Genre."""
-
-    class Meta:
-        model = Genre
 
 
 @admin.register(Genre)
-class GenreAdmin(ImportExportModelAdmin):
+class GenreAdmin(admin.ModelAdmin):
     """Административный класс для модели Genre."""
 
-    resource_classes = [GenreResource]
     list_display = ('name', 'slug')
     search_fields = ('name',)
 
 
-class TitleResource(resources.ModelResource):
-    """Ресурс для экспорта и импорта данных модели Title."""
-
-    class Meta:
-        model = Title
-
-
 @admin.register(Title)
-class TitleAdmin(ImportExportModelAdmin):
+class TitleAdmin(admin.ModelAdmin):
     """Административный класс для модели Title."""
 
-    resource_classes = [TitleResource]
     list_display = ('name', 'year', 'category',)
     search_fields = ('name',)
     empty_value_display = '-пусто-'
 
 
-class ReviewResource(resources.ModelResource):
-    """Ресурс для экспорта и импорта данных модели Review."""
-
-    title = Field(column_name='title_id', attribute='title',
-                  widget=ForeignKeyWidget(Title, 'pk', coerce_to_string=False))
-    pub_date = Field(
-        column_name='pub_date',
-        attribute='pub_date',
-        widget=DateTimeWidget(format='%Y-%m-%dT%H:%M:%S.%fZ')
-    )
-
-    class Meta:
-        model = Review
-
-
 @admin.register(Review)
-class ReviewAdmin(ImportExportModelAdmin):
+class ReviewAdmin(admin.ModelAdmin):
     """Административный класс для модели Review."""
 
-    resource_classes = [ReviewResource]
     list_display = ('author', 'title', 'score', 'pub_date')
     search_fields = ('author', 'score',)
 
 
-class CommentResource(resources.ModelResource):
-    """Ресурс для экспорта и импорта данных модели Comment."""
-
-    review = Field(column_name='review_id', attribute='review',
-                   widget=ForeignKeyWidget(
-                       Review, 'pk', coerce_to_string=False)
-                   )
-    pub_date = Field(
-        column_name='pub_date',
-        attribute='pub_date',
-        widget=DateTimeWidget(format='%Y-%m-%dT%H:%M:%S.%fZ')
-    )
-
-    class Meta:
-        model = Comment
-
-
 @admin.register(Comment)
-class CommentAdmin(ImportExportModelAdmin):
+class CommentAdmin(admin.ModelAdmin):
     """Административный класс для модели Comment."""
 
-    resource_classes = [CommentResource]
-    list_display = ('author', 'pub_date', 'review',)
-
-
-class UserResource(resources.ModelResource):
-    """Ресурс для экспорта и импорта данных модели User."""
-
-    class Meta:
-        model = User
+    list_display = ('author', 'pub_date', 'review')
+    search_fields = ('author', 'review')
 
 
 @admin.register(User)
-class UserAdmin(ImportExportModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     """Административный класс для модели User."""
 
-    resource_classes = [UserResource]
+    list_display = ('username', 'role', 'email')
+    search_fields = ('username', 'role')
