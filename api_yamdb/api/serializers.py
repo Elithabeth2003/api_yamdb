@@ -14,7 +14,7 @@ from api_yamdb.constants import (
     MAX_LENGTH_USERNAME
 )
 from reviews.models import Category, Genre, Title, Comment, Review, User
-from reviews.validators import validate_username, validate_year, validate_score
+from reviews.validators import validate_username, validate_year
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -121,10 +121,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             'pub_date'
         )
         model = Review
-
-    def validate_score(self, value):
-        """Валидация оценки."""
-        return validate_score(value)
 
     def validate(self, data):
         """

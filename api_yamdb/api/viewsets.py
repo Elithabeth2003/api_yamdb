@@ -5,7 +5,7 @@ from rest_framework.filters import SearchFilter
 from .permissions import AdminOrReadOnlyPermission
 
 
-class ListCreateDestroyViewSet(
+class CRDSlugSearchViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
