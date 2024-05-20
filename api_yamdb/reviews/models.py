@@ -23,7 +23,7 @@ from api_yamdb.constants import (
     ADMIN,
     VALID_CHARS_FOR_CONFIRMATION_CODE
 )
-from .validators import validate_year, validate_username
+from .validators import validate_year, ValidateUsername
 
 
 class User(AbstractUser):
@@ -39,11 +39,11 @@ class User(AbstractUser):
         verbose_name='Имя пользователя',
         unique=True,
         max_length=MAX_LENGTH_USERNAME,
-        validators=[validate_username]
+        validators=[ValidateUsername()]
 
     )
     email = models.EmailField(
-        verbose_name='Email address',
+        verbose_name='Электронная почта',
         unique=True,
         max_length=MAX_LENGTH_EMAIL_ADDRESS
     )
@@ -63,8 +63,8 @@ class User(AbstractUser):
     )
     role = models.CharField(
         verbose_name='Роль',
-        default='user',
-        max_length=max(map(lambda x: len(x[1]), ROLE_CHOICES)),
+        default=USER,
+        max_length=max(len(role) for role, _ in ROLE_CHOICES),
         choices=ROLE_CHOICES
     )
     confirmation_code = models.CharField(
@@ -74,7 +74,7 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         """Проверяет, является ли пользователь администратором."""
-        return self.role == ADMIN or self.is_superuser or self.is_staff
+        return self.role == ADMIN or self.is_staff
 
     @property
     def is_moderator(self):
@@ -93,7 +93,10 @@ class User(AbstractUser):
     def create_confirmation_code(self):
         """Создает код подтверждения."""
         self.confirmation_code = ''.join(
-            sample(VALID_CHARS_FOR_CONFIRMATION_CODE, MAX_LENGTH_CONFIRMATION_CODE)
+            sample(
+                VALID_CHARS_FOR_CONFIRMATION_CODE,
+                MAX_LENGTH_CONFIRMATION_CODE
+            )
         )
 
     def send_confirmation_code(self):

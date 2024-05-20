@@ -34,7 +34,7 @@ from api.serializers import (
     SignUpSerializer,
     GetTokenSerializer,
     UserSerializer,
-    AdminSerializer
+    BaseAdminUserSerializer
 )
 from api.permissions import (
     AdminOrReadOnlyPermission,
@@ -184,7 +184,7 @@ class UserViewSet(ModelViewSet):
     """Представление для операций с пользователями."""
 
     queryset = User.objects.all()
-    serializer_class = AdminSerializer
+    serializer_class = BaseAdminUserSerializer
     permission_classes = (IsAdminPermission,)
     filter_backends = (SearchFilter,)
     lookup_field = 'username'
@@ -199,7 +199,10 @@ class UserViewSet(ModelViewSet):
     def profile(self, request):
         """Представление профиля текущего пользователя."""
         if not request.method == 'PATCH':
-            return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
+            return Response(
+                UserSerializer(request.user).data,
+                status=status.HTTP_200_OK
+            )
         serializer = UserSerializer(
             request.user, data=request.data, partial=True
         )
