@@ -14,7 +14,8 @@ from api_yamdb.constants import (
     MAX_LENGTH_USERNAME
 )
 from reviews.models import Category, Genre, Title, Comment, Review, User
-from reviews.validators import validate_username, validate_year
+from reviews.validators import ValidateUsername, validate_year, validate_score
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -139,7 +140,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         return data
 
 
-class BaseAdminUserSerializer(serializers.ModelSerializer):
+class BaseAdminUserSerializer(serializers.ModelSerializer, ValidateUsername):
     """Базовый сериализатор для операций с моделью User."""
 
     class Meta:
@@ -153,37 +154,15 @@ class BaseAdminUserSerializer(serializers.ModelSerializer):
             'role',
         )
 
-    def validate_username(self, value):
-        """
-        Проверяет правильность формата имени пользователя.
-
-        Проверяет, соответствует ли имя пользователя заданному формату.
-        """
-        return validate_username(value)
-
-
-class AdminSerializer(BaseAdminUserSerializer):
-    """Сериализатор для административных операций с моделью User."""
-
-    pass
-
 
 class UserSerializer(BaseAdminUserSerializer):
     """Сериализатор для базовых операций с моделью User."""
 
-    username = serializers.SlugField(
-        max_length=MAX_LENGTH_USERNAME,
-    )
-    email = serializers.EmailField(
-        max_length=MAX_LENGTH_EMAIL_ADDRESS,
-    )
-    role = serializers.ChoiceField(
-        choices=User.ROLE_CHOICES,
-        read_only=True
-    )
+    class Meta(BaseAdminUserSerializer.Meta):
+        read_only_fields = ('role',)
 
 
-class SignUpSerializer(serializers.Serializer):
+class SignUpSerializer(serializers.Serializer, ValidateUsername):
     """Сериализатор для регистрации нового пользователя."""
 
     username = serializers.CharField(
@@ -195,16 +174,8 @@ class SignUpSerializer(serializers.Serializer):
         required=True
     )
 
-    def validate_username(self, value):
-        """
-        Проверяет правильность формата имени пользователя.
 
-        Проверяет, соответствует ли имя пользователя заданному формату.
-        """
-        return validate_username(value)
-
-
-class GetTokenSerializer(serializers.Serializer):
+class GetTokenSerializer(serializers.Serializer, ValidateUsername):
     """Сериализатор для получения токена аутентификации пользователя."""
 
     username = serializers.CharField(
@@ -215,11 +186,3 @@ class GetTokenSerializer(serializers.Serializer):
         max_length=MAX_LENGTH_CONFIRMATION_CODE,
         required=True
     )
-
-    def validate_username(self, value):
-        """
-        Проверяет правильность формата имени пользователя.
-
-        Проверяет, соответствует ли имя пользователя заданному формату.
-        """
-        return validate_username(value)

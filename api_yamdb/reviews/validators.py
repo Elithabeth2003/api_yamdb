@@ -27,19 +27,30 @@ def validate_year(value):
     return value
 
 
-def validate_username(username):
-    """Проверка имени пользователя на соответствие шаблону."""
-    if username == ME:
+class ValidateUsername:
+    def validate_username(self, username):
+        """Проверка имени пользователя на соответствие шаблону."""
+        if username == ME:
+            raise ValidationError(
+                f'Использовать имя {ME} в качестве username запрещено!'
+            )
+        matching_chars = re.findall(r'^[\w.@+-]+$', username)
+        if not matching_chars:
+            raise ValidationError(
+                f'Содержимое поля \'username\' недопустимые символы, '
+                f'а именно содержит {matching_chars}'
+            )
+        return username
+
+    def __call__(self, value):
+        return self.validate_username(value)
+
+
+def validate_score(score):
+    """Проверка соответствия оценки произведения заданным границам."""
+    if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
         raise ValidationError(
-            f'Использовать имя {ME} в качестве username запрещено!'
+            'Оценка произведения должны быть в пределах '
+            f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
         )
-    non_matching_chars = [char for char in username if not re.match(
-        r'^[\w.@+-]+$', char
-    )]
-    if non_matching_chars:
-        raise ValidationError(
-            f'Содержимое поля \'username\' не '
-            'соответствует паттерну ^[\\w.@+-]+\\Z$, '
-            f'а именно содержит {non_matching_chars}'
-        )
-    return username
+    return score
