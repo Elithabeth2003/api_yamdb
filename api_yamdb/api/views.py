@@ -22,7 +22,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
 
-from api.viewsets import ListCreateDestroyViewSet
+from api.viewsets import CRDSlugSearchViewSet
 from api.filters import TitleFilter
 from api.serializers import (
     CategorySerializer,
@@ -45,7 +45,7 @@ from reviews.models import Category, Genre, Title, Review, Comment, User
 from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, ME, VALID_CHARS_FOR_CONFIRMATION_CODE
 
 
-class CategoryViewSet(ListCreateDestroyViewSet):
+class CategoryViewSet(CRDSlugSearchViewSet):
     """
     View для обработки запросов к модели Category.
 
@@ -56,7 +56,7 @@ class CategoryViewSet(ListCreateDestroyViewSet):
     serializer_class = CategorySerializer
 
 
-class GenreViewSet(ListCreateDestroyViewSet):
+class GenreViewSet(CRDSlugSearchViewSet):
     """
     View для обработки запросов к модели Genre.
 
