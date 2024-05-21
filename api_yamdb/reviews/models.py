@@ -21,7 +21,8 @@ from api_yamdb.constants import (
     USER,
     MODERATOR,
     ADMIN,
-    VALID_CHARS_FOR_CONFIRMATION_CODE
+    VALID_CHARS_FOR_CONFIRMATION_CODE,
+    ROLE_CHOICES
 )
 from .validators import validate_year, ValidateUsername
 
@@ -29,17 +30,11 @@ from .validators import validate_year, ValidateUsername
 class User(AbstractUser):
     """Модель пользователя приложения."""
 
-    ROLE_CHOICES = [
-        (USER, USER),
-        (MODERATOR, MODERATOR),
-        (ADMIN, ADMIN),
-    ]
-
     username = models.CharField(
         verbose_name='Имя пользователя',
         unique=True,
         max_length=MAX_LENGTH_USERNAME,
-        validators=[ValidateUsername.validate_username]
+        validators=[ValidateUsername()]
 
     )
     email = models.EmailField(

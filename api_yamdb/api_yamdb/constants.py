@@ -9,6 +9,14 @@ ME = 'me'
 USER = 'user'
 MODERATOR = 'moderator'
 ADMIN = 'admin'
+RU_USER = 'Пользователь'
+RU_MODERATOR = 'Модератор'
+RU_ADMIN = 'Администратор'
+ROLE_CHOICES = [
+    (USER, RU_USER),
+    (MODERATOR, RU_MODERATOR),
+    (ADMIN, RU_ADMIN),
+]
 MAX_LENGTH_USERNAME = 150
 MAX_LENGTH_FIRST_NAME = 150
 MAX_LENGTH_LAST_NAME = 150

@@ -11,11 +11,10 @@ from rest_framework import serializers
 from api_yamdb.constants import (
     MAX_LENGTH_CONFIRMATION_CODE,
     MAX_LENGTH_EMAIL_ADDRESS,
-    MAX_LENGTH_USERNAME
+    MAX_LENGTH_USERNAME,
 )
 from reviews.models import Category, Genre, Title, Comment, Review, User
 from reviews.validators import ValidateUsername, validate_year
-
 
 
 class CategorySerializer(serializers.ModelSerializer):

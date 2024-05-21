@@ -42,7 +42,7 @@ from api.permissions import (
     IsAdminPermission
 )
 from reviews.models import Category, Genre, Title, Review, Comment, User
-from api_yamdb.constants import MAX_LENGTH_CONFIRMATION_CODE, ME, VALID_CHARS_FOR_CONFIRMATION_CODE
+from api_yamdb.constants import ME
 
 
 class CategoryViewSet(CRDSlugSearchViewSet):
@@ -237,19 +237,19 @@ class SignUpView(APIView):
             )
             user.create_confirmation_code()
             user.send_confirmation_code()
-            
+
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
             )
         except IntegrityError:
             if User.objects.filter(username=username).exists():
-                raise ValidationError( 
-                    f'{username} уже зарегистрирован!' 
+                raise ValidationError(
+                    f'{username} уже зарегистрирован!'
                 )
-            raise ValidationError( 
-                    f'{email} уже зарегистрирован!' 
-                )            
+            raise ValidationError(
+                f'{email} уже зарегистрирован!'
+            )
 
 
 class GetTokenView(TokenObtainPairView):
