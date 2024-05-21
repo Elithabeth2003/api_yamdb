@@ -14,7 +14,7 @@ from api_yamdb.constants import (
     MAX_LENGTH_USERNAME
 )
 from reviews.models import Category, Genre, Title, Comment, Review, User
-from reviews.validators import ValidateUsername, validate_year, validate_score
+from reviews.validators import ValidateUsername, validate_year
 
 
 

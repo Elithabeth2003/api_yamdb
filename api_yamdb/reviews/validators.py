@@ -44,13 +44,3 @@ class ValidateUsername:
 
     def __call__(self, value):
         return self.validate_username(value)
-
-
-def validate_score(score):
-    """Проверка соответствия оценки произведения заданным границам."""
-    if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
-        raise ValidationError(
-            'Оценка произведения должны быть в пределах '
-            f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
-        )
-    return score
