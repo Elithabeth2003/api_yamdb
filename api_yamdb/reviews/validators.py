@@ -9,7 +9,7 @@ import re
 
 from django.core.exceptions import ValidationError
 
-from api_yamdb.constants import MAX_VALUE_SCORE, MIN_VALUE_SCORE, ME
+from api_yamdb.constants import ME
 
 
 def validate_year(value):
@@ -21,8 +21,8 @@ def validate_year(value):
     """
     if value > date.today().year:
         raise ValidationError(
-            f"""Введенный год ({value})
-            не может быть больше текущего ({date.today().year})."""
+            f'Введенный год ({value}) не может быть'
+            f'больше текущего ({date.today().year}).'
         )
     return value
 

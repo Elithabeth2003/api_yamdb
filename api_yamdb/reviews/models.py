@@ -109,7 +109,7 @@ class User(AbstractUser):
         )
 
 
-class CategoryGenreBaseModel(models.Model):
+class TypeNameTitleBaseModel(models.Model):
     """Базовая модель для категорий и жанров произведений."""
 
     name = models.CharField(
@@ -124,30 +124,28 @@ class CategoryGenreBaseModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['name']
+        ordering = ('name',)
 
     def __str__(self):
         """Возвращает строковое представление объекта категории."""
         return self.name[:MAX_LENGTH_FOR_STR]
 
 
-class Category(CategoryGenreBaseModel):
+class Category(TypeNameTitleBaseModel):
     """Модель для категорий произведений."""
 
-    class Meta:
+    class Meta(TypeNameTitleBaseModel.Meta):
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
-        ordering = ['name']
         default_related_name = 'categories'
 
 
-class Genre(CategoryGenreBaseModel):
+class Genre(TypeNameTitleBaseModel):
     """Модель для жанров произведений."""
 
-    class Meta:
+    class Meta(TypeNameTitleBaseModel.Meta):
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
-        ordering = ['name']
         default_related_name = 'genres'
 
 
@@ -188,7 +186,7 @@ class Title(models.Model):
         return self.name[:MAX_LENGTH_FOR_STR]
 
 
-class CommentReviewBaseModel(models.Model):
+class PublicationBaseModel(models.Model):
     """Базовая модель для комментариев и отзывов на произведения."""
 
     text = models.TextField(verbose_name='Текст')
@@ -204,10 +202,10 @@ class CommentReviewBaseModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
 
 
-class Comment(CommentReviewBaseModel):
+class Comment(PublicationBaseModel):
     """Модель для комментариев к отзывам на произведения."""
 
     review = models.ForeignKey(
@@ -216,7 +214,7 @@ class Comment(CommentReviewBaseModel):
         verbose_name='Отзыв',
     )
 
-    class Meta:
+    class Meta(PublicationBaseModel.Meta):
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
         default_related_name = 'comments'
@@ -226,7 +224,7 @@ class Comment(CommentReviewBaseModel):
         return f'Комментарий {self.author} на {self.review}'
 
 
-class Review(CommentReviewBaseModel):
+class Review(PublicationBaseModel):
     """Модель для отзывов на произведения."""
 
     score = models.IntegerField(
@@ -240,11 +238,15 @@ class Review(CommentReviewBaseModel):
         verbose_name='Произведение',
     )
 
-    class Meta:
+    class Meta(PublicationBaseModel.Meta):
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
         default_related_name = 'reviews'
-        unique_together = [['author', 'title']]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'], name='unique_author_title'
+            )
+        ]
 
     def __str__(self):
         """Возвращает строковое представление объекта отзыва."""

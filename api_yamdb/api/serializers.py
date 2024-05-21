@@ -17,6 +17,7 @@ from reviews.models import Category, Genre, Title, Comment, Review, User
 from reviews.validators import ValidateUsername, validate_year, validate_score
 
 
+
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для модели Category."""
 
@@ -121,10 +122,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             'pub_date'
         )
         model = Review
-
-    def validate_score(self, value):
-        """Валидация оценки."""
-        return validate_score(value)
 
     def validate(self, data):
         """
