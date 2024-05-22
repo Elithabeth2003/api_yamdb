@@ -97,6 +97,7 @@ class TypeNameBaseModel(models.Model):
     class Meta:
         abstract = True
         ordering = ('name',)
+        default_related_name = '%(class)s'
 
     def __str__(self):
         """Возвращает строковое представление объекта категории."""
@@ -109,7 +110,6 @@ class Category(TypeNameBaseModel):
     class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
-        default_related_name = 'categories'
 
 
 class Genre(TypeNameBaseModel):
@@ -118,7 +118,6 @@ class Genre(TypeNameBaseModel):
     class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
-        default_related_name = 'genres'
 
 
 class Title(models.Model):

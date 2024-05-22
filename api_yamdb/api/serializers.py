@@ -6,6 +6,7 @@
 в рамках API Django REST Framework.
 
 """
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from api_yamdb.settings import MAX_LENGTH_CONFIRMATION_CODE
@@ -15,6 +16,7 @@ from api_yamdb.constants import (
     MAX_VALUE_SCORE,
     MIN_VALUE_SCORE,
 )
+from api_yamdb.constants import MAX_VALUE_SCORE, MIN_VALUE_SCORE
 from reviews.models import Category, Genre, Title, Comment, Review, User
 from reviews.validators import ValidateUsername, validate_year
 
@@ -123,6 +125,15 @@ class ReviewSerializer(serializers.ModelSerializer):
             'pub_date'
         )
         model = Review
+
+    def validate_score(self, value):
+        """Валидация оценки."""
+        if value not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
+            raise ValidationError(
+                'Оценка произведения должны быть в пределах '
+                f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
+            )
+        return value
 
     def validate(self, data):
         """
