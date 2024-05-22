@@ -37,7 +37,8 @@ class ValidateUsername:
         matching_chars = set(''.join(re.findall(r'[^\w.@+-]+', username)))
         if matching_chars:
             raise ValidationError(
-                f'Поле содержит недопустимые символы: {matching_chars}'
+                f'Поле \'username\' содержит '
+                f'недопустимые символы: {matching_chars}'
             )
         return username
 

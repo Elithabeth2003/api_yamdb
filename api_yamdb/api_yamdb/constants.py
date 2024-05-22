@@ -6,13 +6,13 @@ MAX_LENGTH_FOR_STR = 30
 USER = 'user'
 MODERATOR = 'moderator'
 ADMIN = 'admin'
-RU_USER = 'Пользователь'
-RU_MODERATOR = 'Модератор'
-RU_ADMIN = 'Администратор'
+LOCALIZED_USER = 'Пользователь'
+LOCALIZED_MODERATOR = 'Модератор'
+LOCALIZED_ADMIN = 'Администратор'
 ROLE_CHOICES = [
-    (USER, RU_USER),
-    (MODERATOR, RU_MODERATOR),
-    (ADMIN, RU_ADMIN),
+    (USER, LOCALIZED_USER),
+    (MODERATOR, LOCALIZED_MODERATOR),
+    (ADMIN, LOCALIZED_ADMIN),
 ]
 MAX_LENGTH_USERNAME = 150
 MAX_LENGTH_FIRST_NAME = 150

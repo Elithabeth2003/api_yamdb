@@ -46,7 +46,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class ReadTitleSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения информации о произведении (Title)."""
 
-    genre = GenreSerializer(many=True,)
+    genre = GenreSerializer(many=True, )
     category = CategorySerializer()
     rating = serializers.IntegerField(read_only=True)
 
@@ -144,7 +144,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         """
         title_id = self.context.get('view').kwargs.get('title_id')
         if self.context['request'].method == 'POST' and Review.objects.filter(
-            title=title_id, author=self.context['request'].user
+                title=title_id, author=self.context['request'].user
         ).exists():
             raise serializers.ValidationError(
                 'Отзыв на это произведение уже оставлен!'
@@ -159,6 +159,7 @@ class ReviewSerializer(serializers.ModelSerializer):
                 f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
             )
         return score
+
 
 class AdminUserSerializer(serializers.ModelSerializer, ValidateUsername):
     """Базовый сериализатор для операций с моделью User."""

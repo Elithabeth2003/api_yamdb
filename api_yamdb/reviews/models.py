@@ -3,7 +3,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api_yamdb.settings import MAX_LENGTH_CONFIRMATION_CODE
+from api_yamdb.settings import (
+    MAX_CONFIRMATION_CODE_ATTEMPTS,
+    MAX_LENGTH_CONFIRMATION_CODE
+)
 from api_yamdb.constants import (
     MAX_LENGTH_EMAIL_ADDRESS,
     MAX_LENGTH_FIRST_NAME,
@@ -59,6 +62,9 @@ class User(AbstractUser):
     )
     confirmation_code = models.CharField(
         max_length=MAX_LENGTH_CONFIRMATION_CODE
+    )
+    confirmation_code_attempts = models.IntegerField(
+        default=MAX_CONFIRMATION_CODE_ATTEMPTS
     )
 
     @property

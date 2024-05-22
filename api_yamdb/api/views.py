@@ -43,7 +43,7 @@ from api.permissions import (
 )
 from api.utils import create_confirmation_code, send_confirmation_code
 from reviews.models import Category, Genre, Title, Review, Comment, User
-from api_yamdb.settings import ME
+from api_yamdb.settings import MAX_CONFIRMATION_CODE_ATTEMPTS, ME
 
 
 class CategoryViewSet(CRDSlugSearchViewSet):
@@ -246,7 +246,10 @@ class SignUpView(APIView):
         except IntegrityError:
             raise ValidationError(
                 '{field} уже зарегистрирован!'.format(
-                    field=(username if User.objects.filter(username=username).exists() else email))
+                    field=username if User.objects.filter(
+                        username=username
+                    ).exists() else email
+                )
             )
 
 
@@ -270,9 +273,12 @@ class GetTokenView(TokenObtainPairView):
             User, username=request.data.get('username')
         )
         if user.confirmation_code != request.data['confirmation_code']:
-            raise ValidationError(
-                'Неверный код подтверждения. Запросите код ещё раз.',
-            )
+            user.confirmation_code_attempts += 1
+            if (user.confirmation_code_attempts
+                    >= MAX_CONFIRMATION_CODE_ATTEMPTS):
+                raise ValidationError(
+                    'Неверный код подтверждения. Запросите код ещё раз.',
+                )
         token = {'token': str(AccessToken.for_user(user))}
         return Response(
             token,
