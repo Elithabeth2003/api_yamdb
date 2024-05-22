@@ -21,8 +21,8 @@ def validate_year(value):
     """
     if value > date.today().year:
         raise ValidationError(
-            f'Введенный год ({value}) не может быть'
-            f'больше текущего ({date.today().year}).'
+            f'Введенный год {value} не может быть'
+            f'больше текущего {date.today().year}.'
         )
     return value
 
