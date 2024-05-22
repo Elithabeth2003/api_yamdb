@@ -8,10 +8,12 @@
 """
 from rest_framework import serializers
 
+from api_yamdb.settings import MAX_LENGTH_CONFIRMATION_CODE
 from api_yamdb.constants import (
-    MAX_LENGTH_CONFIRMATION_CODE,
     MAX_LENGTH_EMAIL_ADDRESS,
     MAX_LENGTH_USERNAME,
+    MAX_VALUE_SCORE,
+    MIN_VALUE_SCORE,
 )
 from reviews.models import Category, Genre, Title, Comment, Review, User
 from reviews.validators import ValidateUsername, validate_year
@@ -138,8 +140,16 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
         return data
 
+    def validate_score(self, score):
+        """Проверка соответствия оценки произведения заданным границам."""
+        if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
+            raise serializers.ValidationError(
+                'Оценка произведения должны быть в пределах '
+                f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
+            )
+        return score
 
-class BaseAdminUserSerializer(serializers.ModelSerializer, ValidateUsername):
+class AdminUserSerializer(serializers.ModelSerializer, ValidateUsername):
     """Базовый сериализатор для операций с моделью User."""
 
     class Meta:
@@ -154,10 +164,10 @@ class BaseAdminUserSerializer(serializers.ModelSerializer, ValidateUsername):
         )
 
 
-class UserSerializer(BaseAdminUserSerializer):
+class UserSerializer(AdminUserSerializer):
     """Сериализатор для базовых операций с моделью User."""
 
-    class Meta(BaseAdminUserSerializer.Meta):
+    class Meta(AdminUserSerializer.Meta):
         read_only_fields = ('role',)
 
 

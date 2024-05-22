@@ -34,15 +34,16 @@ from api.serializers import (
     SignUpSerializer,
     GetTokenSerializer,
     UserSerializer,
-    BaseAdminUserSerializer
+    AdminUserSerializer
 )
 from api.permissions import (
     AdminOrReadOnlyPermission,
     AdminModeratorAuthorPermission,
     IsAdminPermission
 )
+from api.utils import create_confirmation_code, send_confirmation_code
 from reviews.models import Category, Genre, Title, Review, Comment, User
-from api_yamdb.constants import ME
+from api_yamdb.settings import ME
 
 
 class CategoryViewSet(CRDSlugSearchViewSet):
@@ -184,7 +185,7 @@ class UserViewSet(ModelViewSet):
     """Представление для операций с пользователями."""
 
     queryset = User.objects.all()
-    serializer_class = BaseAdminUserSerializer
+    serializer_class = AdminUserSerializer
     permission_classes = (IsAdminPermission,)
     filter_backends = (SearchFilter,)
     lookup_field = 'username'
@@ -235,20 +236,17 @@ class SignUpView(APIView):
                 username=username,
                 email=email
             )
-            user.create_confirmation_code()
-            user.send_confirmation_code()
+            create_confirmation_code(user)
+            send_confirmation_code(user)
 
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
             )
         except IntegrityError:
-            if User.objects.filter(username=username).exists():
-                raise ValidationError(
-                    f'{username} уже зарегистрирован!'
-                )
             raise ValidationError(
-                f'{email} уже зарегистрирован!'
+                '{field} уже зарегистрирован!'.format(
+                    field=(username if User.objects.filter(username=username).exists() else email))
             )
 
 
@@ -263,7 +261,7 @@ class GetTokenView(TokenObtainPairView):
 
         Аутентифицирует пользователя по имени пользователя и
         коду подтверждения. Если аутентификация прошла успешно,
-        выдает токен аутентификации.
+        выдает токен аутентификации.ы
         """
         serializer = GetTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -272,10 +270,8 @@ class GetTokenView(TokenObtainPairView):
             User, username=request.data.get('username')
         )
         if user.confirmation_code != request.data['confirmation_code']:
-            user.create_confirmation_code()
-            user.send_confirmation_code()
             raise ValidationError(
-                'Неверный код подтверждения. Новый код выслан на почту.',
+                'Неверный код подтверждения. Запросите код ещё раз.',
             )
         token = {'token': str(AccessToken.for_user(user))}
         return Response(

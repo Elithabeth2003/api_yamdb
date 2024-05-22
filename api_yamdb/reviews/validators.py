@@ -9,7 +9,7 @@ import re
 
 from django.core.exceptions import ValidationError
 
-from api_yamdb.constants import ME
+from api_yamdb.settings import ME
 
 
 def validate_year(value):

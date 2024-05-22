@@ -1,14 +1,10 @@
 """Модуль, определяющий модели для приложения отзывов."""
-from random import sample
-
-from django.core.mail import send_mail
-from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from api_yamdb.settings import MAX_LENGTH_CONFIRMATION_CODE
 from api_yamdb.constants import (
-    MAX_LENGTH_CONFIRMATION_CODE,
     MAX_LENGTH_EMAIL_ADDRESS,
     MAX_LENGTH_FIRST_NAME,
     MAX_LENGTH_FOR_STR,
@@ -21,7 +17,6 @@ from api_yamdb.constants import (
     USER,
     MODERATOR,
     ADMIN,
-    VALID_CHARS_FOR_CONFIRMATION_CODE,
     ROLE_CHOICES
 )
 from .validators import validate_year, ValidateUsername
@@ -85,26 +80,8 @@ class User(AbstractUser):
         """Возвращает строковое представление объекта пользователя."""
         return self.username[:MAX_LENGTH_FOR_STR]
 
-    def create_confirmation_code(self):
-        """Создает код подтверждения."""
-        self.confirmation_code = ''.join(
-            sample(
-                VALID_CHARS_FOR_CONFIRMATION_CODE,
-                MAX_LENGTH_CONFIRMATION_CODE
-            )
-        )
 
-    def send_confirmation_code(self):
-        """Отправляет код подтверждения на почту пользователя."""
-        send_mail(
-            'Код подтверждения',
-            f'Ваш код подтверждения: {self.confirmation_code}',
-            settings.SENDER_EMAIL,
-            [self.email]
-        )
-
-
-class TypeNameTitleBaseModel(models.Model):
+class TypeNameBaseModel(models.Model):
     """Базовая модель для категорий и жанров произведений."""
 
     name = models.CharField(
@@ -126,19 +103,19 @@ class TypeNameTitleBaseModel(models.Model):
         return self.name[:MAX_LENGTH_FOR_STR]
 
 
-class Category(TypeNameTitleBaseModel):
+class Category(TypeNameBaseModel):
     """Модель для категорий произведений."""
 
-    class Meta(TypeNameTitleBaseModel.Meta):
+    class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
         default_related_name = 'categories'
 
 
-class Genre(TypeNameTitleBaseModel):
+class Genre(TypeNameBaseModel):
     """Модель для жанров произведений."""
 
-    class Meta(TypeNameTitleBaseModel.Meta):
+    class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
         default_related_name = 'genres'
