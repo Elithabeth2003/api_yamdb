@@ -104,7 +104,7 @@ class User(AbstractUser):
         )
 
 
-class TypeNameTitleBaseModel(models.Model):
+class TypeNameBaseModel(models.Model):
     """Базовая модель для категорий и жанров произведений."""
 
     name = models.CharField(
@@ -120,28 +120,27 @@ class TypeNameTitleBaseModel(models.Model):
     class Meta:
         abstract = True
         ordering = ('name',)
+        default_related_name = '%(class)s'
 
     def __str__(self):
         """Возвращает строковое представление объекта категории."""
         return self.name[:MAX_LENGTH_FOR_STR]
 
 
-class Category(TypeNameTitleBaseModel):
+class Category(TypeNameBaseModel):
     """Модель для категорий произведений."""
 
-    class Meta(TypeNameTitleBaseModel.Meta):
+    class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
-        default_related_name = 'categories'
 
 
-class Genre(TypeNameTitleBaseModel):
+class Genre(TypeNameBaseModel):
     """Модель для жанров произведений."""
 
-    class Meta(TypeNameTitleBaseModel.Meta):
+    class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
-        default_related_name = 'genres'
 
 
 class Title(models.Model):
