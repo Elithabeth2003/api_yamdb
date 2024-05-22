@@ -1,9 +1,6 @@
 """constants."""
-from string import digits
-
 
 MAX_LENGTH_FOR_STR = 30
-ME = 'me'
 
 # USER
 USER = 'user'
@@ -21,8 +18,7 @@ MAX_LENGTH_USERNAME = 150
 MAX_LENGTH_FIRST_NAME = 150
 MAX_LENGTH_LAST_NAME = 150
 MAX_LENGTH_EMAIL_ADDRESS = 254
-VALID_CHARS_FOR_CONFIRMATION_CODE = [digit for digit in digits]
-MAX_LENGTH_CONFIRMATION_CODE = 8
+
 
 # TITLE
 MIN_VALUE_SCORE = 1

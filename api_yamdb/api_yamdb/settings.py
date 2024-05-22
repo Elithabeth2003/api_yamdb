@@ -8,6 +8,7 @@
 """
 from datetime import timedelta
 from pathlib import Path
+from string import digits
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -119,3 +120,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ME = 'me'
+
+VALID_CHARS_FOR_CONFIRMATION_CODE = digits
+MAX_LENGTH_CONFIRMATION_CODE = 8
