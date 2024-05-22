@@ -261,7 +261,7 @@ class GetTokenView(TokenObtainPairView):
 
         Аутентифицирует пользователя по имени пользователя и
         коду подтверждения. Если аутентификация прошла успешно,
-        выдает токен аутентификации.ы
+        выдает токен аутентификации.
         """
         serializer = GetTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
