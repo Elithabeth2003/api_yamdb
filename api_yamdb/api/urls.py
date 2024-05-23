@@ -1,12 +1,13 @@
 """Модуль URL Определяет шаблоны URL для конечных точек API."""
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
 
+from rest_framework.routers import DefaultRouter
 
 from api.views import (
     CategoryViewSet, GenreViewSet, TitleViewSet, CommentViewSet,
     ReviewViewSet, UserViewSet, SignUpView, GetTokenView
 )
+
 
 router_v1 = DefaultRouter()
 router_v1.register('categories', CategoryViewSet, basename='categories')

@@ -7,11 +7,10 @@ import csv
 import sqlite3
 
 from django.core.management.base import BaseCommand
+from django.conf import settings
 
-from api_yamdb.settings import BASE_DIR
 
-
-path = str(BASE_DIR) + '/data/'
+path = str(settings.BASE_DIR) + '/data/'
 files = ('category.csv', 'genre.csv', 'titles.csv',
          'genre_title.csv', 'review.csv', 'comments.csv', 'users.csv')
 tables = ('reviews_category', 'reviews_genre', 'reviews_title',

@@ -2,8 +2,8 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 
-from api_yamdb.settings import MAX_LENGTH_CONFIRMATION_CODE
 from api_yamdb.constants import (
     MAX_LENGTH_EMAIL_ADDRESS,
     MAX_LENGTH_FIRST_NAME,
@@ -58,7 +58,7 @@ class User(AbstractUser):
         choices=ROLE_CHOICES
     )
     confirmation_code = models.CharField(
-        max_length=MAX_LENGTH_CONFIRMATION_CODE, null=True
+        max_length=settings.MAX_LENGTH_CONFIRMATION_CODE, null=True
     )
 
     @property
@@ -97,6 +97,7 @@ class TypeNameBaseModel(models.Model):
     class Meta:
         abstract = True
         ordering = ('name',)
+        default_related_name = '%(class)s' + 's'
 
     def __str__(self):
         """Возвращает строковое представление объекта категории."""
@@ -109,7 +110,6 @@ class Category(TypeNameBaseModel):
     class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
-        default_related_name = 'categories'
 
 
 class Genre(TypeNameBaseModel):
@@ -118,7 +118,6 @@ class Genre(TypeNameBaseModel):
     class Meta(TypeNameBaseModel.Meta):
         verbose_name = 'жанр'
         verbose_name_plural = 'жанры'
-        default_related_name = 'genres' 
 
 
 class Title(models.Model):
@@ -166,7 +165,7 @@ class PublicationBaseModel(models.Model):
         User,
         verbose_name='Автор',
         on_delete=models.CASCADE,
-        related_name='%(class)ss'
+        related_name='users'
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -176,6 +175,7 @@ class PublicationBaseModel(models.Model):
     class Meta:
         abstract = True
         ordering = ('-pub_date',)
+        default_related_name = '%(class)s' + 's'
 
 
 class Comment(PublicationBaseModel):
@@ -190,7 +190,6 @@ class Comment(PublicationBaseModel):
     class Meta(PublicationBaseModel.Meta):
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
-        default_related_name = 'comments'
 
     def __str__(self):
         """Возвращает строковое представление объекта комментария."""
@@ -214,7 +213,6 @@ class Review(PublicationBaseModel):
     class Meta(PublicationBaseModel.Meta):
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
-        default_related_name = 'reviews'
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'], name='unique_author_title'

@@ -6,10 +6,12 @@
 Каждый класс View предоставляет функциональность для выполнения операций CRUD
 (Create, Retrieve, Update, Delete) с соответствующей моделью.
 """
+from random import sample
 from django.db import IntegrityError
 from django.db.models import Avg
+from django.conf import settings
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -21,6 +23,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
+from django_filters.rest_framework import DjangoFilterBackend
 
 from api.viewsets import CRDSlugSearchViewSet
 from api.filters import TitleFilter
@@ -41,9 +44,15 @@ from api.permissions import (
     AdminModeratorAuthorPermission,
     IsAdminPermission
 )
-from api.utils import create_confirmation_code, send_confirmation_code
-from reviews.models import Category, Genre, Title, Review, Comment, User
-from api_yamdb.settings import ME
+from api.utils import send_confirmation_code
+from reviews.models import (
+    Category,
+    Genre,
+    Title,
+    Review,
+    Comment,
+    User
+)
 
 
 class CategoryViewSet(CRDSlugSearchViewSet):
@@ -194,7 +203,7 @@ class UserViewSet(ModelViewSet):
 
     @action(
         detail=False, methods=['GET', 'PATCH'],
-        url_path=ME, url_name=ME,
+        url_path=settings.USER_PROFILE_URL, url_name=settings.USER_PROFILE_URL,
         permission_classes=(IsAuthenticated,)
     )
     def profile(self, request):
@@ -236,14 +245,6 @@ class SignUpView(APIView):
                 username=username,
                 email=email
             )
-            if not user.confirmation_code:
-                create_confirmation_code(user)
-            send_confirmation_code(user)
-
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK
-            )
         except IntegrityError:
             raise ValidationError(
                 '{field} уже зарегистрирован!'.format(
@@ -252,6 +253,21 @@ class SignUpView(APIView):
                     ).exists() else email
                 )
             )
+
+        user.confirmation_code = ''.join(
+            sample(
+                settings.VALID_CHARS_FOR_CONFIRMATION_CODE,
+                settings.MAX_LENGTH_CONFIRMATION_CODE
+            )
+        )
+        user.save()
+
+        send_confirmation_code(user)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
 
 
 class GetTokenView(TokenObtainPairView):
@@ -278,7 +294,7 @@ class GetTokenView(TokenObtainPairView):
                 'Неверный код подтверждения. Запросите код ещё раз.',
             )
         token = {'token': str(AccessToken.for_user(user))}
-        create_confirmation_code(user)
+
         return Response(
             token,
             status=status.HTTP_200_OK
