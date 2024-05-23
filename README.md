@@ -58,7 +58,7 @@ python manage.py migrate
 
 + Наполнение базы данных из CSV-файлов:
 
-В папке [data](api_yamdb/static/data) расположены шаблоны таблиц. После заполнения выполните команду:
+В папке [data](api_yamdb/data) расположены шаблоны таблиц. После заполнения выполните команду:
 
 ```
 python3 manage.py import-csv

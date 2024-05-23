@@ -8,14 +8,15 @@ import sqlite3
 
 from django.core.management.base import BaseCommand
 
-from api_yamdb.api_yamdb.settings import BASE_DIR
+from api_yamdb.settings import BASE_DIR
 
 
-base = 'api_yamdb/static/data/'
+path = str(BASE_DIR) + '/data/'
 files = ('category.csv', 'genre.csv', 'titles.csv',
-         'genre_title.csv', 'review.csv', 'comments.csv')
+         'genre_title.csv', 'review.csv', 'comments.csv', 'users.csv')
 tables = ('reviews_category', 'reviews_genre', 'reviews_title',
-          'reviews_title_genre', 'reviews_review', 'reviews_comment')
+          'reviews_title_genre', 'reviews_review', 'reviews_comment',
+          'reviews_user')
 
 
 def import_csv_to_sqlite(csv_file, table_name):
@@ -26,6 +27,7 @@ def import_csv_to_sqlite(csv_file, table_name):
         csv_reader = csv.reader(file)
         header = next(csv_reader)
         columns = ', '.join(header)
+
         for row in csv_reader:
             size = ', '.join(['?'] * len(row))
             cursor.execute(
@@ -43,7 +45,7 @@ class Command(BaseCommand):
         for file, table in zip(files, tables):
             try:
                 print('start download', file)
-                import_csv_to_sqlite(BASE_DIR + file, table)
+                import_csv_to_sqlite(path + file, table)
                 print('finish download', file)
             except Exception as e:
                 print(e)

@@ -29,7 +29,7 @@ class User(AbstractUser):
         verbose_name='Имя пользователя',
         unique=True,
         max_length=MAX_LENGTH_USERNAME,
-        validators=[ValidateUsername]
+        validators=[ValidateUsername()]
 
     )
     email = models.EmailField(
@@ -58,7 +58,7 @@ class User(AbstractUser):
         choices=ROLE_CHOICES
     )
     confirmation_code = models.CharField(
-        max_length=MAX_LENGTH_CONFIRMATION_CODE
+        max_length=MAX_LENGTH_CONFIRMATION_CODE, null=True
     )
 
     @property
