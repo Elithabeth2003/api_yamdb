@@ -115,6 +115,14 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
+    score = serializers.IntegerField(
+        min_value=MIN_VALUE_SCORE,
+        max_value=MAX_VALUE_SCORE,
+        error_messages={
+            'min_value': f'Оценка должна быть не меньше {MIN_VALUE_SCORE}.',
+            'max_value': f'Оценка должна быть не больше {MAX_VALUE_SCORE}.'
+        }
+    )
 
     class Meta:
         fields = (
@@ -126,15 +134,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         )
         model = Review
 
-    def validate_score(self, value):
-        """Валидация оценки."""
-        if value not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
-            raise ValidationError(
-                'Оценка произведения должны быть в пределах '
-                f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
-            )
-        return value
-
     def validate(self, data):
         """
         Проверка валидности данных.
@@ -144,21 +143,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         """
         title_id = self.context.get('view').kwargs.get('title_id')
         if self.context['request'].method == 'POST' and Review.objects.filter(
-                title=title_id, author=self.context['request'].user
+            title=title_id, author=self.context['request'].user
         ).exists():
             raise serializers.ValidationError(
                 'Отзыв на это произведение уже оставлен!'
             )
         return data
-
-    def validate_score(self, score):
-        """Проверка соответствия оценки произведения заданным границам."""
-        if score not in range(MIN_VALUE_SCORE, MAX_VALUE_SCORE + 1):
-            raise serializers.ValidationError(
-                'Оценка произведения должны быть в пределах '
-                f'от {MIN_VALUE_SCORE} до {MAX_VALUE_SCORE}.'
-            )
-        return score
 
 
 class AdminUserSerializer(serializers.ModelSerializer, ValidateUsername):
