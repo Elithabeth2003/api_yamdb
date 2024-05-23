@@ -8,8 +8,7 @@ from datetime import date
 import re
 
 from django.core.exceptions import ValidationError
-
-from api_yamdb.settings import ME
+from django.conf import settings
 
 
 def validate_year(value):
@@ -30,15 +29,16 @@ def validate_year(value):
 class ValidateUsername:
     def validate_username(self, username):
         """Проверка имени пользователя на соответствие шаблону."""
-        if username == ME:
+        if username == settings.USER_PROFILE_URL:
             raise ValidationError(
-                f'Использовать имя {ME} в качестве username запрещено!'
+                (f'Использовать имя {settings.USER_PROFILE_URL} '
+                 'в качестве username запрещено!')
             )
-        matching_chars = set(''.join(re.findall(r'[^\w.@+-]+', username)))
+        matching_chars = ''.join(re.findall(r'[^\w.@+-]+', username))
         if matching_chars:
             raise ValidationError(
                 f'Поле \'username\' содержит '
-                f'недопустимые символы: {matching_chars}'
+                f'недопустимые символы: {set(matching_chars)}'
             )
         return username
 
