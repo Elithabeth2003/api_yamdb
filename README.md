@@ -72,9 +72,6 @@ python3 manage.py import-csv
 finish download
 ```
 
-либо сообщение о произошедшей ошибке.
-
-
 + Запускаем проект:
 
 ```

@@ -1,4 +1,4 @@
-"""constants."""
+"""Константы проекта."""
 
 MAX_LENGTH_FOR_STR = 30
 

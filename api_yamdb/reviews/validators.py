@@ -4,9 +4,8 @@
 Этот модуль содержит функции для валидации данных,
 используемые в приложении отзывов.
 """
-from datetime import date
 import re
-
+from datetime import date
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.deconstruct import deconstructible
