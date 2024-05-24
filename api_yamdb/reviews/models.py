@@ -61,6 +61,9 @@ class User(AbstractUser):
         max_length=settings.MAX_LENGTH_CONFIRMATION_CODE, null=True
     )
 
+    class Meta:
+        default_related_name = 'users'
+
     @property
     def is_admin(self):
         """Проверяет, является ли пользователь администратором."""
@@ -165,7 +168,6 @@ class PublicationBaseModel(models.Model):
         User,
         verbose_name='Автор',
         on_delete=models.CASCADE,
-        related_name='users'
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',

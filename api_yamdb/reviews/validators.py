@@ -9,6 +9,7 @@ import re
 
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.utils.deconstruct import deconstructible
 
 
 def validate_year(value):
@@ -26,6 +27,7 @@ def validate_year(value):
     return value
 
 
+@deconstructible
 class ValidateUsername:
     def validate_username(self, username):
         """Проверка имени пользователя на соответствие шаблону."""
