@@ -23,6 +23,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
+from rest_framework.throttling import UserRateThrottle
 from django_filters.rest_framework import DjangoFilterBackend
 
 from api.viewsets import CRDSlugSearchViewSet
@@ -274,6 +275,7 @@ class GetTokenView(TokenObtainPairView):
     """Представление для получения токена аутентификации пользователя."""
 
     permission_classes = (AllowAny,)
+    throttle_classes = (UserRateThrottle,)
 
     def post(self, request, *args, **kwargs):
         """
