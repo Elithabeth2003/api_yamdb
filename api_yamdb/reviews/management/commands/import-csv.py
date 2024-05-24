@@ -5,7 +5,6 @@
 """
 import csv
 import sqlite3
-
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
@@ -20,13 +19,17 @@ tables = ('reviews_category', 'reviews_genre', 'reviews_title',
 
 def import_csv_to_sqlite(csv_file, table_name):
     """Импортирует данные из CSV файла в базу данных SQLite."""
-    conn = sqlite3.connect('api_yamdb/db.sqlite3')
+    conn = sqlite3.connect(str(settings.BASE_DIR) + '/db.sqlite3')
     cursor = conn.cursor()
+    cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';")
+    if not cursor.fetchone():
+        print(f"Table {table_name} does not exist. Skipping {csv_file}.")
+        conn.close()
+        return
     with open(csv_file, 'r', encoding='utf-8') as file:
         csv_reader = csv.reader(file)
         header = next(csv_reader)
         columns = ', '.join(header)
-
         for row in csv_reader:
             size = ', '.join(['?'] * len(row))
             cursor.execute(

@@ -48,8 +48,12 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-+ Переходим в репозиторий с manage.py и выполняем миграции:
++ Переходим в репозиторий с manage.py и создаем миграции:
 
+```
+python manage.py makemigrations reviews
+```
++ Выполняем миграции:
 ```
 python3 manage.py migrate
 либо
@@ -64,6 +68,8 @@ python manage.py migrate
 
 ```
 python3 manage.py import-csv
+либо
+python manage.py import-csv
 ```
 
 После успешного импорта каждой таблицы в консоль будет выведено сообщение:
