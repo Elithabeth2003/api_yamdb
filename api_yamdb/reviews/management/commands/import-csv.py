@@ -22,7 +22,7 @@ def import_csv_to_sqlite(csv_file, table_name):
     """Импортирует данные из CSV файла в базу данных SQLite."""
     conn = sqlite3.connect('api_yamdb/db.sqlite3')
     cursor = conn.cursor()
-    with open(csv_file, 'r') as file:
+    with open(csv_file, 'r', encoding='utf-8') as file:
         csv_reader = csv.reader(file)
         header = next(csv_reader)
         columns = ', '.join(header)
