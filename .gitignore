@@ -147,6 +147,3 @@ dmypy.json
 
 # папки со статикой и медиа
 media/
-
-**/migrations/*
-!**/migrations/__init__.py
