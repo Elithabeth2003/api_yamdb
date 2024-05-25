@@ -11,7 +11,7 @@
 ## Стек использованных технологий
 + Django 3.2
 + JWT
-+ Python 3.10
++ Python 3.9
 + DRF
 
 ## Запуск проекта
@@ -22,24 +22,22 @@ cd api_yamdb
 ```
 + Установите и активируйте виртуальное окружение c учетом версии Python 3.9:
 
-```
-python3 -m venv env
-```
-либо
-```
-python -m venv venv
-```
 * Если у вас Linux/macOS
 
     ```
+    python3 -m venv env
     source env/bin/activate
     ```
 
 * Если у вас Windows
 
     ```
+    python -m venv venv
     source venv/Scripts/activate
     ```
+
++ Обновите менеджер пакетов pip:
+
 ```
 python -m pip install --upgrade pip
 ```
@@ -50,23 +48,15 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-+ Переходим в репозиторий с manage.py
++ Переходим в репозиторий с manage.py и создаем миграции:
 
 ```
 cd api_yamdb
-```
-
-+  и создаем миграции:
-
-```
 python manage.py makemigrations
 ```
 
 + Выполняем миграции:
-```
-python3 manage.py migrate
-```
-либо
+
 ```
 python manage.py migrate
 ```
@@ -77,10 +67,6 @@ python manage.py migrate
 Перед выполнением команды импорта, требуется выполнить миграции базы данных, описанные пунктом выше. 
 В случае их успешного применения, в консоли следует выполнить команду:
 
-```
-python3 manage.py import-csv
-```
-либо
 ```
 python manage.py import-csv
 ```
@@ -93,10 +79,6 @@ finish download
 
 + Запускаем проект:
 
-```
-python3 manage.py runserver
-```
-либо
 ```
 python manage.py runserver
 ```
