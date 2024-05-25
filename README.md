@@ -24,7 +24,9 @@ cd api_yamdb
 
 ```
 python3 -m venv env
+```
 либо
+```
 python -m venv venv
 ```
 * Если у вас Linux/macOS
@@ -48,11 +50,24 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-+ Переходим в репозиторий с manage.py и выполняем миграции:
++ Переходим в репозиторий с manage.py
 
 ```
+cd api_yamdb
+```
+
++  и создаем миграции:
+
+```
+python manage.py makemigrations
+```
+
++ Выполняем миграции:
+```
 python3 manage.py migrate
+```
 либо
+```
 python manage.py migrate
 ```
 
@@ -65,6 +80,10 @@ python manage.py migrate
 ```
 python3 manage.py import-csv
 ```
+либо
+```
+python manage.py import-csv
+```
 
 После успешного импорта каждой таблицы в консоль будет выведено сообщение:
 
@@ -76,7 +95,9 @@ finish download
 
 ```
 python3 manage.py runserver
+```
 либо
+```
 python manage.py runserver
 ```
 
