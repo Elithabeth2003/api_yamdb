@@ -7,16 +7,21 @@
 
 """
 from django.conf import settings
-
 from rest_framework import serializers
 
 from api_yamdb.constants import (
     MAX_LENGTH_EMAIL_ADDRESS,
     MAX_LENGTH_USERNAME,
-    MAX_VALUE_SCORE,
-    MIN_VALUE_SCORE,
+    MAX_VALUE_SCORE, MIN_VALUE_SCORE
 )
-from reviews.models import Category, Genre, Title, Comment, Review, User
+from reviews.models import (
+    Category,
+    Comment,
+    Genre,
+    Review,
+    Title,
+    User
+)
 from reviews.validators import ValidateUsername, validate_year
 
 
