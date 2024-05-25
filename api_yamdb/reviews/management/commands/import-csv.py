@@ -4,53 +4,134 @@
 Импортирует из CSV файлов в базу данных SQLite.
 """
 import csv
+from random import randint
 import sqlite3
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
 
 path = str(settings.BASE_DIR) + '/data/'
-files = ('category.csv', 'genre.csv', 'titles.csv',
-         'genre_title.csv', 'review.csv', 'comments.csv', 'users.csv')
-tables = ('reviews_category', 'reviews_genre', 'reviews_title',
-          'reviews_title_genre', 'reviews_review', 'reviews_comment',
-          'reviews_user')
-
-
-def import_csv_to_sqlite(csv_file, table_name):
-    """Импортирует данные из CSV файла в базу данных SQLite."""
-    conn = sqlite3.connect(str(settings.BASE_DIR) + '/db.sqlite3')
-    cursor = conn.cursor()
-    cursor.execute(
-        f"SELECT name FROM sqlite_master WHERE type='table'"
-        f"AND name='{table_name}';"
-    )
-    if not cursor.fetchone():
-        print(f'Table {table_name} does not exist. Skipping {csv_file}.')
-        conn.close()
-        return
-    with open(csv_file, 'r', encoding='utf-8') as file:
-        csv_reader = csv.reader(file)
-        header = next(csv_reader)
-        columns = ', '.join(header)
-        for row in csv_reader:
-            size = ', '.join(['?'] * len(row))
-            cursor.execute(
-                f"INSERT INTO {table_name} ({columns}) VALUES ({size})", row
-            )
-    conn.commit()
-    conn.close()
-
 
 class Command(BaseCommand):
     """Команда для импорта данных из CSV файлов в базу данных SQLite."""
 
     def handle(self, *args, **kwargs) -> None:
         """Обрабатывает импорт данных из CSV-файлов в базу данных SQLite."""
-        for file, table in zip(files, tables):
-            try:
-                print('start download', file)
-                import_csv_to_sqlite(path + file, table)
-                print('finish download', file)
-            except Exception as e:
-                print(e)
+
+        conn = sqlite3.connect(str(settings.BASE_DIR) + '/db.sqlite3')
+        cursor = conn.cursor()
+
+        with open(
+                f'{path}category.csv', 'r', newline='', encoding='utf-8'
+        ) as csvfile:
+            reader_category = csv.DictReader(csvfile, delimiter=',')
+            to_db_category = [
+                (row['id'], row['name'], row['slug'])
+                for row in reader_category
+            ]
+
+        with open(f'{path}genre.csv', 'r', newline='', encoding='utf-8') as csvfile:
+            reader_genre = csv.DictReader(csvfile, delimiter=',')
+            to_db_genre = [
+                (row['id'], row['name'], row['slug'])
+                for row in reader_genre
+            ]
+
+        with open(
+                f'{path}titles.csv', 'r', newline='', encoding='utf-8'
+        ) as csvfile:
+            reader_titles = csv.DictReader(csvfile, delimiter=',')
+            to_db_titles = [
+                (row['id'], row['name'], '', row['category'],
+                row['year'])
+                for row in reader_titles
+            ]
+
+        with open(
+                f'{path}genre_title.csv', 'r', newline='', encoding='utf-8'
+        ) as csvfile:
+            reader_genre_title = csv.DictReader(csvfile, delimiter=',')
+            to_db_genre_title = [
+                (row['id'], row['title_id'], row['genre_id'])
+                for row in reader_genre_title
+            ]
+
+        with open(
+                f'{path}review.csv', 'r', newline='', encoding='utf-8'
+        ) as csvfile:
+            reader_review = csv.DictReader(csvfile, delimiter=',')
+            to_db_review = [
+                (row['id'], row['text'], row['score'], row['pub_date'],
+                row['author'], row['title_id'])
+                for row in reader_review
+            ]
+
+        with open(
+                f'{path}comments.csv', 'r', newline='', encoding='utf-8'
+        ) as csvfile:
+            reader_comments = csv.DictReader(csvfile, delimiter=',')
+            to_db_comments = [
+                (row['id'], row['text'], row['pub_date'],
+                row['author'], row['review_id'])
+                for row in reader_comments
+            ]
+
+        with open(
+                f'{path}users.csv', 'r', newline='', encoding='utf-8'
+        ) as csvfile:
+            reader_users = csv.DictReader(csvfile, delimiter=',')
+            to_db_users = [
+                (row['id'], '', '', '',
+                row['username'], row['first_name'], row['last_name'],
+                '', '', '', row['bio'],
+                row['role'], str(randint(1000000, 10000000)), row['email'])
+                for row in reader_users
+            ]
+
+        cursor.executemany(
+            'INSERT INTO reviews_category '
+            '(id, name, slug) VALUES (?, ?, ?)',
+            to_db_category
+        )
+        conn.commit()
+        cursor.executemany(
+            'INSERT INTO reviews_genre (id, name, slug)'
+            ' VALUES (?, ?, ?)',
+            to_db_genre
+        )
+        conn.commit()
+        cursor.executemany(
+            'INSERT INTO reviews_title (id, name, description, category_id, year)'
+            ' VALUES (?, ?, ?, ?, ?)',
+            to_db_titles
+        )
+        conn.commit()
+        cursor.executemany(
+            'INSERT INTO reviews_title_genre (id, title_id, genre_id)'
+            ' VALUES (?, ?, ?)',
+            to_db_genre_title
+        )
+        conn.commit()
+        cursor.executemany(
+            'INSERT INTO reviews_review '
+            '(id, text, score, pub_date, author_id, title_id)'
+            ' VALUES (?, ?, ?, ?, ?, ?)',
+            to_db_review
+        )
+        conn.commit()
+        cursor.executemany(
+            'INSERT INTO reviews_comment (id, text, pub_date, author_id, review_id)'
+            ' VALUES (?, ?, ?, ?, ?)',
+            to_db_comments
+        )
+        conn.commit()
+        cursor.executemany(
+            'INSERT INTO reviews_user (id, password, last_login, '
+            'is_superuser, username, first_name, last_name,'
+            'is_staff, is_active, date_joined, bio,'
+            'role, confirmation_code, email)'
+            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            to_db_users
+        )
+        conn.commit()
+        conn.close()
