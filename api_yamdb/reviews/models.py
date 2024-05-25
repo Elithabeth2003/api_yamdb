@@ -5,21 +5,15 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from api_yamdb.constants import (
-    MAX_LENGTH_EMAIL_ADDRESS,
-    MAX_LENGTH_FIRST_NAME,
-    MAX_LENGTH_FOR_STR,
-    MAX_LENGTH_LAST_NAME,
-    MAX_LENGTH_NAME,
-    MAX_LENGTH_SLUG,
-    MAX_LENGTH_USERNAME,
-    MAX_VALUE_SCORE,
-    MIN_VALUE_SCORE,
-    USER,
-    MODERATOR,
-    ADMIN,
-    ROLE_CHOICES
+    ADMIN, MAX_LENGTH_EMAIL_ADDRESS,
+    MAX_LENGTH_FIRST_NAME, MAX_LENGTH_FOR_STR,
+    MAX_LENGTH_LAST_NAME, MAX_LENGTH_NAME,
+    MAX_LENGTH_SLUG, MAX_LENGTH_USERNAME,
+    MAX_VALUE_SCORE, MIN_VALUE_SCORE, MODERATOR,
+    ROLE_CHOICES, USER
 )
-from .validators import validate_year, ValidateUsername
+
+from .validators import ValidateUsername, validate_year
 
 
 class User(AbstractUser):

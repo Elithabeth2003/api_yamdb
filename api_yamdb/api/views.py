@@ -8,52 +8,39 @@
 """
 from random import sample
 
+from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Avg
-from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.filters import SearchFilter
-from rest_framework.views import APIView
+from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import SAFE_METHODS
-from rest_framework.throttling import UserRateThrottle
-from django_filters.rest_framework import DjangoFilterBackend
 
-from api.viewsets import CRDSlugSearchViewSet
 from api.filters import TitleFilter
-from api.serializers import (
-    CategorySerializer,
-    GenreSerializer,
-    ReadTitleSerializer,
-    WriteTitleSerializer,
-    CommentSerializer,
-    ReviewSerializer,
-    SignUpSerializer,
-    GetTokenSerializer,
-    UserSerializer,
-    AdminUserSerializer
-)
 from api.permissions import (
-    AdminOrReadOnlyPermission,
     AdminModeratorAuthorPermission,
+    AdminOrReadOnlyPermission,
     IsAdminPermission
 )
-from api.utils import send_confirmation_code
-from reviews.models import (
-    Category,
-    Genre,
-    Title,
-    Review,
-    Comment,
-    User
+from api.serializers import (
+    AdminUserSerializer, CategorySerializer,
+    CommentSerializer, GenreSerializer,
+    GetTokenSerializer, ReadTitleSerializer,
+    ReviewSerializer, SignUpSerializer,
+    UserSerializer, WriteTitleSerializer
 )
+from api.utils import send_confirmation_code
+from api.viewsets import CRDSlugSearchViewSet
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class CategoryViewSet(CRDSlugSearchViewSet):
