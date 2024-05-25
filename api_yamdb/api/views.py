@@ -7,11 +7,11 @@
 (Create, Retrieve, Update, Delete) с соответствующей моделью.
 """
 from random import sample
+
 from django.db import IntegrityError
 from django.db.models import Avg
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -295,9 +295,7 @@ class GetTokenView(TokenObtainPairView):
             raise ValidationError(
                 'Неверный код подтверждения. Запросите код ещё раз.',
             )
-        token = {'token': str(AccessToken.for_user(user))}
-
         return Response(
-            token,
+            {'token': str(AccessToken.for_user(user))},
             status=status.HTTP_200_OK
         )

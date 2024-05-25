@@ -35,8 +35,9 @@ class ValidateUsername:
                 (f'Использовать имя {settings.USER_PROFILE_URL} '
                  'в качестве username запрещено!')
             )
-        matching_chars = ''.join(re.findall(r'[^\w.@+-]+', username))
+        matching_chars = re.findall(r'[^\w.@+-]+', username)
         if matching_chars:
+            ''.join(set(matching_chars))
             raise ValidationError(
                 f'Поле \'username\' содержит '
                 f'недопустимые символы: {set(matching_chars)}'

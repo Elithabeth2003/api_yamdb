@@ -1,8 +1,8 @@
 """Модуль, определяющий модели для приложения отзывов."""
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 from api_yamdb.constants import (
     MAX_LENGTH_EMAIL_ADDRESS,
@@ -100,7 +100,7 @@ class TypeNameBaseModel(models.Model):
     class Meta:
         abstract = True
         ordering = ('name',)
-        default_related_name = '%(class)s' + 's'
+        default_related_name = '%(class)ss'
 
     def __str__(self):
         """Возвращает строковое представление объекта категории."""
@@ -177,7 +177,7 @@ class PublicationBaseModel(models.Model):
     class Meta:
         abstract = True
         ordering = ('-pub_date',)
-        default_related_name = '%(class)s' + 's'
+        default_related_name = '%(class)ss'
 
 
 class Comment(PublicationBaseModel):

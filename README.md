@@ -48,16 +48,10 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-+ Переходим в репозиторий с manage.py и создаем миграции:
++ Переходим в репозиторий с manage.py и выполняем миграции:
 
 ```
 cd api_yamdb
-python manage.py makemigrations
-```
-
-+ Выполняем миграции:
-
-```
 python manage.py migrate
 ```
 
@@ -71,11 +65,7 @@ python manage.py migrate
 python manage.py import-csv
 ```
 
-После успешного импорта каждой таблицы в консоль будет выведено сообщение:
-
-```
-finish download
-```
+После успешного импорта каждой таблицы в консоль будет выведено сообщение "finish download"
 
 + Запускаем проект:
 
