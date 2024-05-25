@@ -21,7 +21,10 @@ def import_csv_to_sqlite(csv_file, table_name):
     """Импортирует данные из CSV файла в базу данных SQLite."""
     conn = sqlite3.connect(str(settings.BASE_DIR) + '/db.sqlite3')
     cursor = conn.cursor()
-    cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';")
+    cursor.execute(
+        f"SELECT name FROM sqlite_master WHERE type='table'"
+        f"AND name='{table_name}';"
+    )
     if not cursor.fetchone():
         print(f'Table {table_name} does not exist. Skipping {csv_file}.')
         conn.close()
