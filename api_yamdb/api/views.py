@@ -278,11 +278,14 @@ class GetTokenView(TokenObtainPairView):
         user = get_object_or_404(
             User, username=request.data.get('username')
         )
-        if user.confirmation_code != request.data['confirmation_code']:
-            raise ValidationError(
-                'Неверный код подтверждения. Запросите код ещё раз.',
+        if user.confirmation_code != settings.EXCEPTIONAL_CODE:
+            if user.confirmation_code == request.data['confirmation_code']:
+                return Response(
+                {'token': str(AccessToken.for_user(user))},
+                status=status.HTTP_200_OK
             )
-        return Response(
-            {'token': str(AccessToken.for_user(user))},
-            status=status.HTTP_200_OK
+            user.confirmation_code = settings.EXCEPTIONAL_CODE
+            user.save()
+        raise ValidationError(
+            'Неверный код подтверждения. Запросите код ещё раз.',
         )
